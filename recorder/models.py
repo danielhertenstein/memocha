@@ -5,6 +5,9 @@ class Doctor(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
 
+    def __str__(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
+
 class Person(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
@@ -14,8 +17,14 @@ class Person(models.Model):
     # Probably want to know what the person has been prescribed
     # (medication and dosage).
 
+    def __str__(self):
+        return "{0} {1}".format(self.first_name, self.last_name)
+
 class Medication(models.Model):
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
 
 class Video(models.Model):
     person = models.ForeignKey(Person, on_delete=models.CASCADE)
@@ -23,3 +32,11 @@ class Video(models.Model):
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     # Probably want to keep track of the dosage.
     # Need a field for the actual video file.
+
+    def __str__(self):
+        return "{0} {1} {2} {3}".format(
+            self.person.first_name,
+            self.person.last_name,
+            self.record_date,
+            self.medication.name
+        )
