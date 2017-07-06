@@ -34,7 +34,8 @@ class Video(models.Model):
     record_date = models.DateTimeField()
     medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
     # Probably want to keep track of the dosage.
-    # Need a field for the actual video file.
+    # TODO: Hook this up correctly.
+    upload = models.FileField()
 
     def __str__(self):
         return "{0} {1} {2} {3}".format(
