@@ -1,14 +1,17 @@
 Patient user tasks:
 Create account
+Log in
 Link to Doctor(s)
 Get Patient model assigned
 See what medications are prescribed
 See what videos need to be recorded
 Record a video
 Look at recording history
+Log out
 
 Doctor user tasks:
 Create account
+Log in
 Get Doctor model assigned
 Create Patient instances
 Set Patient prescriptions
@@ -16,3 +19,4 @@ Look at Patient recording history
 Watch Patient videos
 Approve Patient videos
 Disapprove Patient videos
+Log Out
