@@ -20,7 +20,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^recorder/', include('recorder.urls')),
-    url(r'^accounts/login/$', auth_views.LoginView.as_view()),
+    url(r'^accounts/login/$', auth_views.LoginView.as_view(template_name='accounts/login.html')),
     url(r'^accounts/logout/$', auth_views.LogoutView.as_view(), {'next_page': settings.LOGOUT_REDIRECT_URL}),
     url(r'^admin/', admin.site.urls),
 ]
