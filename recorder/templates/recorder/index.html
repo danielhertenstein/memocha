@@ -10,12 +10,14 @@
 {% block content %}
     <div class="col-md-3 col-md-offset-3">
         <h2 class="text-center">Doctor Login</h2>
-        <button class="btn btn-block">Login with Existing Account</button>
+        <button class="btn btn-block" onclick="location.href='{% url 'recorder:doctor_dashboard' %}'">
+            Login with Existing Account</button>
         <button class="btn btn-block">Create New Doctor Account</button>
     </div>
     <div class="col-md-3">
         <h2 class="text-center">Patient Login</h2>
-        <button class="btn btn-block">Login with Existing Account</button>
+        <button class="btn btn-block" onclick="location.href='{% url 'recorder:patient_dashboard' %}'">
+            Login with Existing Account</button>
         <button class="btn btn-block">Create New Patient Account</button>
     </div>
 {% endblock content %}

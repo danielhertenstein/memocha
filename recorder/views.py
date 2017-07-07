@@ -7,5 +7,9 @@ def index(request):
 
 
 @login_required
-def user(request):
-    return render(request, 'recorder/user.html')
+def patient_dashboard(request):
+    return render(request, 'recorder/patient_dashboard.html')
+
+@login_required
+def doctor_dashboard(request):
+    return render(request, 'recorder/doctor_dashboard.html')
