@@ -2,9 +2,20 @@
 
 {% block title %}Recorder Landing Page{%  endblock title %}
 
+{% block extra-head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'recorder/index.css' %}" />
+{% endblock extra-head %}
+
 {% block content %}
-    <input type="button" value="Login with Existing Account">
-    <input type="button" value="Create New Doctor Account">
-    <input type="button" value="Login with Existing Account">
-    <input type="button" value="Create New Patient Account">
+    <div class="col-md-3 col-md-offset-3">
+        <h2 class="text-center">Doctor Login</h2>
+        <button class="btn btn-block">Login with Existing Account</button>
+        <button class="btn btn-block">Create New Doctor Account</button>
+    </div>
+    <div class="col-md-3">
+        <h2 class="text-center">Patient Login</h2>
+        <button class="btn btn-block">Login with Existing Account</button>
+        <button class="btn btn-block">Create New Patient Account</button>
+    </div>
 {% endblock content %}
