@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^patient/', views.patient_dashboard, name='patient_dashboard'),
     url(r'^doctor/', views.doctor_dashboard, name='doctor_dashboard'),
+    url(r'^new_patient/', views.patient_creation, name='patient_creation'),
+    url(r'^new_doctor/', views.doctor_creation, name='doctor_creation'),
 ]

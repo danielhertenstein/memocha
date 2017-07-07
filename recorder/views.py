@@ -13,3 +13,11 @@ def patient_dashboard(request):
 @login_required
 def doctor_dashboard(request):
     return render(request, 'recorder/doctor_dashboard.html')
+
+
+def patient_creation(request):
+    return render(request, 'recorder/patient_creation.html')
+
+
+def doctor_creation(request):
+    return render(request, 'recorder/doctor_creation.html')
