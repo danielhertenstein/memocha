@@ -121,4 +121,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-LOGOUT_REDIRECT_URL = '/recorder/user'
+LOGOUT_REDIRECT_URL = '/recorder/'

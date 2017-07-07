@@ -1,2 +1,8 @@
-<a href="/accounts/logout">logout</a>
-<p>User page</p>
+{% extends 'base.html' %}
+
+{% block title %}User Page{%  endblock title %}
+
+{% block content %}
+    <a href="/accounts/logout">logout</a>
+    <p>User page</p>
+{% endblock content %}
