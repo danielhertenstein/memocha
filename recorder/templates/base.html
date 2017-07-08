@@ -41,10 +41,16 @@
                 <ul class="nav navbar-nav">
                     <li><a href="/recorder">Home</a></li>
                 </ul>
-            </div>
 
-            {% block navbar-extra %}
-            {% endblock navbar-extra %}
+                {% if user.is_authenticated %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/accounts/logout">Logout</a></li>
+                </ul>
+                {% endif %}
+
+                {% block navbar-extra %}
+                {% endblock navbar-extra %}
+            </div>
         </div>
     </nav>
 
