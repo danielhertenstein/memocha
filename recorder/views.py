@@ -1,5 +1,9 @@
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+from recorder.forms import MyUserCreationForm
+from recorder.models import Doctor
 
 
 def index(request):
@@ -20,4 +24,17 @@ def patient_creation(request):
 
 
 def doctor_creation(request):
-    return render(request, 'recorder/doctor_creation.html')
+    if request.method == 'POST':
+        form = MyUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            doctor = Doctor.objects.create(user=user)
+            user = authenticate(
+                username=doctor.user.username,
+                password=form.cleaned_data.get('password1')
+            )
+            login(request, user)
+            return redirect('/recorder/doctor')
+    else:
+        form = MyUserCreationForm()
+    return render(request, 'recorder/doctor_creation.html', {'form': form})
