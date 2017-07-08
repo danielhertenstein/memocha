@@ -8,27 +8,32 @@ class Doctor(models.Model):
     def __str__(self):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)
 
-class Person(models.Model):
+
+class Prescription(models.Model):
+    medication = models.CharField(max_length=100)
+    dosage = models.IntegerField()
+    # TODO: How do I do the frequency/times of dosages?
+
+    def __str__(self):
+        # TODO: Revisit when format is setup
+        return self.medication
+
+
+class Patient(models.Model):
     user = models.OneToOneField(User)
-    # The doctors field may not be necessary? Are doctors users who will check
-    # on Persons? Is there a way to tie the user to a model instance?
-    doctors = models.ManyToManyField(Doctor)
+    doctors = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    prescriptions = models.ManyToManyField(Prescription)
     # Probably want to know what the person has been prescribed
     # (medication and dosage).
 
     def __str__(self):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)
 
-class Medication(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
 
 class Video(models.Model):
-    person = models.ForeignKey(Person, on_delete=models.CASCADE)
+    person = models.ForeignKey(Patient, on_delete=models.CASCADE)
     record_date = models.DateTimeField()
-    medication = models.ForeignKey(Medication, on_delete=models.CASCADE)
+    prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     # Probably want to keep track of the dosage.
     # TODO: Hook this up correctly.
     upload = models.FileField()
@@ -38,5 +43,5 @@ class Video(models.Model):
             self.person.user.first_name,
             self.person.user.last_name,
             self.record_date,
-            self.medication.name
+            self.prescription.medication
         )

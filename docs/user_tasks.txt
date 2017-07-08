@@ -10,9 +10,9 @@ Look at recording history
     Log out
 
 Doctor user tasks:
-Create account
+    Create account
     Log in
-Get Doctor model assigned
+    Get Doctor model assigned
 Create Patient instances
 Set Patient prescriptions
 Look at Patient recording history
