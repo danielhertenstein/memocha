@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
 class Doctor(models.Model):
@@ -12,7 +13,7 @@ class Doctor(models.Model):
 class Prescription(models.Model):
     medication = models.CharField(max_length=100)
     dosage = models.IntegerField()
-    # TODO: How do I do the frequency/times of dosages?
+    dosage_times = ArrayField(models.TimeField())
 
     def __str__(self):
         # TODO: Revisit when format is setup
