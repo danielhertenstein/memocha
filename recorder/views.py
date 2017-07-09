@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from recorder.forms import MyUserCreationForm
+from recorder.forms import MyUserCreationForm, PatientCreationForm
 from recorder.models import Doctor
 
 
@@ -16,7 +16,9 @@ def patient_dashboard(request):
 
 @login_required
 def doctor_dashboard(request):
-    return render(request, 'recorder/doctor_dashboard.html')
+    doctor = Doctor.objects.get(user=request.user)
+    patients = doctor.patient_set.all()
+    return render(request, 'recorder/doctor_dashboard.html', {'patients': patients})
 
 
 def patient_creation(request):
@@ -38,3 +40,13 @@ def doctor_creation(request):
     else:
         form = MyUserCreationForm()
     return render(request, 'recorder/doctor_creation.html', {'form': form})
+
+
+def add_patient(request):
+    if request.method == 'POST':
+        form = PatientCreationForm(request.POST)
+        if form.is_valid():
+            return redirect('/recorder/doctor')
+    else:
+        form = PatientCreationForm()
+    return render(request, 'recorder/add_patient.html', {'form': form})

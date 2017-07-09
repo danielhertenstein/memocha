@@ -4,5 +4,11 @@
 
 {% block content %}
     <h2>Patients</h2>
-
+    <ul>
+        {% for patient in patients %}
+            <li>{{ patient }}</li>
+        {% endfor %}
+    </ul>
+    <button class="btn btn-block" onclick="location.href='{% url 'recorder:add_patient' %}'">
+        Add new patient</button>
 {% endblock content %}

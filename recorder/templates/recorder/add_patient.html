@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Add a new patient</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_ul }}
+        <button class="btn btn-primary" type="submit">Save Patient</button>
+    </form>
+{% endblock content %}
