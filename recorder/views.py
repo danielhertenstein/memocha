@@ -1,8 +1,9 @@
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
+from django.forms import formset_factory
 
-from recorder.forms import MyUserCreationForm, PatientCreationForm
+from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm
 from recorder.models import Doctor
 
 
@@ -45,8 +46,11 @@ def doctor_creation(request):
 def add_patient(request):
     if request.method == 'POST':
         form = PatientCreationForm(request.POST)
-        if form.is_valid():
+        formset = formset_factory(PrescriptionForm, extra=3)(request.POST)
+        print(formset.data)
+        if form.is_valid() and formset.is_valid():
             return redirect('/recorder/doctor')
     else:
         form = PatientCreationForm()
-    return render(request, 'recorder/add_patient.html', {'form': form})
+        formset = formset_factory(PrescriptionForm, extra=3)()
+    return render(request, 'recorder/add_patient.html', {'form': form, 'formset': formset})

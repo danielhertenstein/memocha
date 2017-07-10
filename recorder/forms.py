@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from recorder.models import Patient
+from recorder.models import Prescription
 
 
 class MyUserCreationForm(UserCreationForm):
@@ -26,3 +26,9 @@ class PatientCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=256)
+
+
+class PrescriptionForm(forms.ModelForm):
+    class Meta:
+        model = Prescription
+        fields = '__all__'
