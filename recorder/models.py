@@ -24,8 +24,7 @@ class Patient(models.Model):
     user = models.OneToOneField(User)
     doctors = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     prescriptions = models.ManyToManyField(Prescription)
-    # Probably want to know what the person has been prescribed
-    # (medication and dosage).
+    # TODO: Add date of birth
 
     def __str__(self):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)

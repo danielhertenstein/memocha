@@ -5,6 +5,14 @@
     <form method="post">
         {% csrf_token %}
         {{ form.as_ul }}
+        <fieldset id="prescription_list"></fieldset>
+        <input type="button" value="Add Prescription" class="add" id="add" />
         <button class="btn btn-primary" type="submit">Save Patient</button>
     </form>
 {% endblock content %}
+
+{% block extra-js %}
+    {% load static %}
+    <script src="{% static 'recorder/add_patient.js' %}"></script>
+{% endblock extra-js %}
+

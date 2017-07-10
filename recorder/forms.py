@@ -22,16 +22,7 @@ class MyUserCreationForm(UserCreationForm):
         ]
 
 
-class PatientCreationForm(forms.ModelForm):
+class PatientCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=256)
-
-    class Meta:
-        model = Patient
-        fields = [
-            'first_name',
-            'last_name',
-            'email',
-            'prescriptions',
-        ]
