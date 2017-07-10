@@ -46,11 +46,11 @@ def doctor_creation(request):
 def add_patient(request):
     if request.method == 'POST':
         form = PatientCreationForm(request.POST)
-        formset = formset_factory(PrescriptionForm, extra=3)(request.POST)
-        print(formset.data)
+        formset = formset_factory(PrescriptionForm)(request.POST, prefix='p_form')
         if form.is_valid() and formset.is_valid():
+            print('boo')
             return redirect('/recorder/doctor')
     else:
         form = PatientCreationForm()
-        formset = formset_factory(PrescriptionForm, extra=3)()
+        formset = formset_factory(PrescriptionForm)(prefix='p_form')
     return render(request, 'recorder/add_patient.html', {'form': form, 'formset': formset})

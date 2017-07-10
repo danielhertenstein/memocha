@@ -2,15 +2,32 @@
 
 {% block content %}
     <h2>Add a new patient</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        {{ form.as_ul }}
-        {% for sub_form in formset %}
-            {{ sub_form.as_ul }}
-            <button class="btn" type="submit" name="action" value="{{ sub_form.prefix }}-DELETE">Remove Prescription</button>
-        {% endfor %}
-        <button class="btn" type="submit" name="action" value="add">Add Prescription</button>
-        <button class="btn btn-primary" type="submit" name="action" value="save">Save Patient</button>
-    </form>
+    <div class="entry">
+        <form method="post">
+            {% csrf_token %}
+            {{ formset.management_form }}
+            {{ form.as_p }}
+            {% for sub_form in formset %}
+                <div id="{{ sub_form.prefix }}-row">
+                    {{ sub_form.as_table }}
+                </div>
+            {% endfor %}
+            <br />
+            <button class="btn btn-primary" type="submit" name="action" value="save">Save Patient</button>
+        </form>
+    </div>
 {% endblock content %}
+
+{% block extra-js %}
+    {% load static %}
+    <script type="text/javascript" src="{% static 'recorder/jquery.formset.js' %}"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('form div').formset({
+                prefix: 'p_form',
+                addText: 'Add Prescription',
+                deleteText: 'remove'
+            })
+        })
+    </script>
+{% endblock extra-js %}
