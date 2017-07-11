@@ -1,8 +1,8 @@
 Patient user tasks:
 Create account
     Log in
-Link to Doctor(s)
-Get Patient model assigned
+    Link to Doctor(s)
+    Get Patient model assigned
 See what medications are prescribed
 See what videos need to be recorded
 Record a video
@@ -13,8 +13,9 @@ Doctor user tasks:
     Create account
     Log in
     Get Doctor model assigned
-Create Patient instances
-Set Patient prescriptions
+    Create Patient instances
+Edit Patient prescriptions
+Remove Patient
 Look at Patient recording history
 Watch Patient videos
 Approve Patient videos

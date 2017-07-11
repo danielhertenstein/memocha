@@ -26,6 +26,8 @@ class PatientCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=256)
+    date_of_birth = forms.DateField(widget=forms.SelectDateWidget)
+    secure_code = forms.CharField(max_length=50)
 
 
 class PrescriptionForm(forms.ModelForm):

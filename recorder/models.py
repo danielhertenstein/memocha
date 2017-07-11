@@ -22,9 +22,9 @@ class Prescription(models.Model):
 
 class Patient(models.Model):
     user = models.OneToOneField(User)
-    doctors = models.ForeignKey(Doctor, on_delete=models.CASCADE)
-    prescriptions = models.ManyToManyField(Prescription)
-    # TODO: Add date of birth
+    doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
+    date_of_birth = models.DateField()
+    prescriptions = models.ManyToManyField(Prescription, blank=True)
 
     def __str__(self):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)
@@ -34,7 +34,6 @@ class Video(models.Model):
     person = models.ForeignKey(Patient, on_delete=models.CASCADE)
     record_date = models.DateTimeField()
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
-    # Probably want to keep track of the dosage.
     # TODO: Hook this up correctly.
     upload = models.FileField()
 

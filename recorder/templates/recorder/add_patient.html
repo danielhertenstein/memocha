@@ -7,6 +7,7 @@
             {% csrf_token %}
             {{ formset.management_form }}
             {{ form.as_p }}
+            <h3>Prescriptions</h3>
             {% for sub_form in formset %}
                 <div id="{{ sub_form.prefix }}-row">
                     {{ sub_form.as_table }}

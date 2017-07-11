@@ -1,10 +1,12 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.forms import formset_factory
 
 from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm
-from recorder.models import Doctor
+from recorder.models import Doctor, Patient, Prescription
 
 
 def index(request):
@@ -43,12 +45,33 @@ def doctor_creation(request):
     return render(request, 'recorder/doctor_creation.html', {'form': form})
 
 
+@login_required
 def add_patient(request):
     if request.method == 'POST':
         form = PatientCreationForm(request.POST)
         formset = formset_factory(PrescriptionForm)(request.POST, prefix='p_form')
         if form.is_valid() and formset.is_valid():
-            print('boo')
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            date_of_birth = form.cleaned_data.get('date_of_birth')
+            username = '{0}_{1}_{2}'.format(first_name, last_name, date_of_birth)
+            password = make_password(form.cleaned_data.get('secure_code'))
+            email = form.cleaned_data.get('email')
+            user = User.objects.create(
+                first_name=first_name,
+                last_name=last_name,
+                username=username,
+                password=password,
+                email=email,
+            )
+            patient = Patient.objects.create(
+                user=user,
+                doctor=request.user.doctor,
+                date_of_birth=date_of_birth,
+            )
+            for sub_form in formset:
+                prescription = sub_form.save()
+                patient.prescriptions.add(prescription)
             return redirect('/recorder/doctor')
     else:
         form = PatientCreationForm()
