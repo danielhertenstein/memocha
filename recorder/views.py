@@ -77,3 +77,8 @@ def add_patient(request):
         form = PatientCreationForm()
         formset = formset_factory(PrescriptionForm)(prefix='p_form')
     return render(request, 'recorder/add_patient.html', {'form': form, 'formset': formset})
+
+
+@login_required
+def patient_details(request, patient_id):
+    return render(request, 'recorder/patient_details.html')
