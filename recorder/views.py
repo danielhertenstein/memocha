@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
-from django.forms import formset_factory
+from django.forms import formset_factory, modelformset_factory
 
 from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm
 from recorder.models import Doctor, Patient, Prescription
@@ -88,6 +88,5 @@ def patient_details(request, patient_id):
             # TODO: Where to redirect to?
             return redirect('/recorder/doctor')
     else:
-        # TODO: Fill formset with prescriptions
-        formset = formset_factory(PrescriptionForm)(prefix='p_form')
+        formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form', queryset=patient.prescriptions.all())
     return render(request, 'recorder/patient_details.html', {'patient': patient, 'formset': formset})
