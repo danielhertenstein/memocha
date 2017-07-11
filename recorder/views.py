@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory
 
 from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm
@@ -81,4 +81,13 @@ def add_patient(request):
 
 @login_required
 def patient_details(request, patient_id):
-    return render(request, 'recorder/patient_details.html')
+    patient = get_object_or_404(Patient, pk=patient_id)
+    if request.method == 'POST':
+        formset = formset_factory(PrescriptionForm)(request.POST, prefix='p_form')
+        if formset.is_valid():
+            # TODO: Where to redirect to?
+            return redirect('/recorder/doctor')
+    else:
+        # TODO: Fill formset with prescriptions
+        formset = formset_factory(PrescriptionForm)(prefix='p_form')
+    return render(request, 'recorder/patient_details.html', {'patient': patient, 'formset': formset})
