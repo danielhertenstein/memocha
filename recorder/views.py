@@ -34,7 +34,7 @@ def patient_creation(request):
             username = '{0}_{1}_{2}'.format(first_name, last_name, date_of_birth)
             secure_code = form.cleaned_data.get('secure_code')
 
-            implied_user = User.objects.get(username=username)
+            implied_user = User.objects.filter(username=username)
             if not implied_user:
                 same_name_users = User.objects.filter(
                     first_name=first_name,
@@ -42,34 +42,35 @@ def patient_creation(request):
                 )
                 for user in same_name_users:
                     if user.patient.date_of_birth == date_of_birth:
-                        # TODO: Display error and render form
-                        print('Account with this information has already been activate. Return to the home screen and try logging in.')
+                        message = ('An account with this information has '
+                                   'already been activated. Return to the home '
+                                   'screen and log in.')
+                        form.add_error('__all__', message)
                 else:
-                    # TODO: Display error and render form
-                    print('No matching patient record. Contact doctor.')
+                    message = ('No matching patient record has been registered '
+                               'by a doctor. Please contact your doctor to '
+                               'ensure your record has been created.')
+                    form.add_error('__all__', message)
 
-            user = authenticate(
-                username=username,
-                password=secure_code
-            )
-            if user is None:
-                # TODO: Display error and render form.
-                print('Name, date of birth, and secure code do not match those provided by your doctor. Please try again.')
+            if not form.errors:
+                user = authenticate(
+                    username=username,
+                    password=secure_code
+                )
+                if user is None:
+                    message = ('The name, date of birth, and secure code '
+                               'entered do not match those provided by your '
+                               'doctor. Please try again.')
+                    form.add_error('__all__', message)
+                else:
+                    # Update user account
+                    user.username = form.cleaned_data.get('username')
+                    user.set_password(form.cleaned_data.get('password1'))
+                    user.save()
 
-            # Make sure new password is different than the secure code
-            if secure_code == form.cleaned_data.get('password1'):
-                # TODO: Display error and render form
-                print('New password must be different than the secure code provided by your doctor.')
-                # TODO: Handle extreme edge case where user picks the same username as the one auto-generated
-
-            # Update user account
-            user.username = form.cleaned_data.get('username')
-            user.set_password(form.cleaned_data.get('password1'))
-#           user.save()
-
-#           login(request, user)
-            return redirect('/recorder')
-            #return redirect('/recorder/patient')
+                    login(request, user)
+                    return redirect('/recorder')
+                    #return redirect('/recorder/patient')
     else:
         form = PatientAccountForm()
     return render(request, 'recorder/patient_creation.html', {'form': form})

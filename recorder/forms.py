@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils.translation import ugettext_lazy as _
 
 from recorder.models import Prescription
 
@@ -53,6 +54,16 @@ class PatientAccountForm(UserCreationForm):
         'password1',
         'password2',
     ]
+
+    def clean(self):
+        cleaned_data = super(PatientAccountForm, self).clean()
+        secure_code = cleaned_data.get('secure_code')
+        new_password = cleaned_data.get('password1')
+        if new_password == secure_code:
+            raise forms.ValidationError(
+                _('Your new password cannot be the same as the secure code.'),
+                code='new_password_invalid',
+            )
 
     class Meta:
         model = User
