@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory, modelformset_factory
 
-from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm
+from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm
 from recorder.models import Doctor, Patient, Prescription
 
 
@@ -25,7 +25,54 @@ def doctor_dashboard(request):
 
 
 def patient_creation(request):
-    return render(request, 'recorder/patient_creation.html')
+    if request.method == 'POST':
+        form = PatientAccountForm(request.POST)
+        if form.is_valid():
+            first_name = form.cleaned_data.get('first_name')
+            last_name = form.cleaned_data.get('last_name')
+            date_of_birth = form.cleaned_data.get('date_of_birth')
+            username = '{0}_{1}_{2}'.format(first_name, last_name, date_of_birth)
+            secure_code = form.cleaned_data.get('secure_code')
+
+            implied_user = User.objects.get(username=username)
+            if not implied_user:
+                same_name_users = User.objects.filter(
+                    first_name=first_name,
+                    last_name=last_name,
+                )
+                for user in same_name_users:
+                    if user.patient.date_of_birth == date_of_birth:
+                        # TODO: Display error and render form
+                        print('Account with this information has already been activate. Return to the home screen and try logging in.')
+                else:
+                    # TODO: Display error and render form
+                    print('No matching patient record. Contact doctor.')
+
+            user = authenticate(
+                username=username,
+                password=secure_code
+            )
+            if user is None:
+                # TODO: Display error and render form.
+                print('Name, date of birth, and secure code do not match those provided by your doctor. Please try again.')
+
+            # Make sure new password is different than the secure code
+            if secure_code == form.cleaned_data.get('password1'):
+                # TODO: Display error and render form
+                print('New password must be different than the secure code provided by your doctor.')
+                # TODO: Handle extreme edge case where user picks the same username as the one auto-generated
+
+            # Update user account
+            user.username = form.cleaned_data.get('username')
+            user.set_password(form.cleaned_data.get('password1'))
+#           user.save()
+
+#           login(request, user)
+            return redirect('/recorder')
+            #return redirect('/recorder/patient')
+    else:
+        form = PatientAccountForm()
+    return render(request, 'recorder/patient_creation.html', {'form': form})
 
 
 def doctor_creation(request):

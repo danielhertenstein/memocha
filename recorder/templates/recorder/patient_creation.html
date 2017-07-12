@@ -1,10 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Patient Account Creation{%  endblock title %}
+
+{% block content %}
+    <h2>Account Creation</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_ul }}
+        <button class="btn btn-primary" type="submit">Create Account</button>
+    </form>
+{% endblock content %}
