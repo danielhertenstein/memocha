@@ -83,10 +83,35 @@ def add_patient(request):
 def patient_details(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
     if request.method == 'POST':
+        # A set to keep track of which previously existing prescriptions are in
+        # the new formset.
+        existing_prescriptions = set([prescription.pk for prescription in patient.prescriptions.all()])
         formset = formset_factory(PrescriptionForm)(request.POST, prefix='p_form')
         if formset.is_valid():
-            # TODO: Where to redirect to?
+            for form in formset:
+                # Check to see if the form matches an existing prescription.
+                matching_prescriptions = patient.prescriptions.filter(
+                    medication=form.cleaned_data['medication'],
+                    dosage=form.cleaned_data['dosage'],
+                    dosage_times=form.cleaned_data['dosage_times']
+                )
+                if matching_prescriptions:
+                    # Remove the matching prescription from the tracker.
+                    for prescription in matching_prescriptions:
+                        existing_prescriptions.remove(prescription.pk)
+                    # Don't need to add this one because it already exists.
+                    continue
+                # Add the new prescription.
+                prescription = form.save()
+                patient.prescriptions.add(prescription)
+            # Any keys left in the existing_prescriptions set were not present
+            # in the formset and we can assume they have been removed.
+            for prescription in existing_prescriptions:
+                patient.prescriptions.get(pk=prescription).delete()
             return redirect('/recorder/doctor')
     else:
-        formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form', queryset=patient.prescriptions.all())
+        if patient.prescriptions.all():
+            formset = modelformset_factory(Prescription, fields='__all__', extra=0)(prefix='p_form', queryset=patient.prescriptions.all())
+        else:
+            formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form')
     return render(request, 'recorder/patient_details.html', {'patient': patient, 'formset': formset})

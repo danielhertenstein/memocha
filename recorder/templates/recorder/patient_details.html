@@ -3,22 +3,22 @@
 {% block title %}Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}{%  endblock title %}
 
 {% block content %}
-    <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
-    <p>Date of birth: {{ patient.date_of_birth }}</p>
-    <h3>Prescriptions</h3>
     <form method="post">
         {% csrf_token %}
+        <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
+        <p>Date of birth: {{ patient.date_of_birth }}</p>
+        <h3>Prescriptions</h3>
         {{ formset.management_form }}
         {% for form in formset %}
             <div id="{{ form.prefix }}-row">
                 {{ form.as_table }}
             </div>
         {% endfor %}
+        <h3>Videos</h3>
+        <br />
+        <button class="btn" type="submit" name="action" value="remove">Remove Patient</button>
+        <button class="btn btn-primary" type="submit" name="action" value="update">Update Patient</button>
     </form>
-    <h3>Videos</h3>
-    <br />
-    <button class="btn" type="submit" name="action" value="remove">Remove Patient</button>
-    <button class="btn btn-primary" type="submit" name="action" value="update">Update Patient</button>
 {% endblock content %}
 
 {% block extra-js %}
