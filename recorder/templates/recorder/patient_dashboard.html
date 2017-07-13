@@ -7,4 +7,52 @@
     {% for prescription in patient.prescriptions.all %}
         <p>{{ prescription }}</p>
     {% endfor %}
+
+    <h2>Videos</h2>
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Medication</th>
+                    <th>Day -4</th>
+                    <th>Day -3</th>
+                    <th>Day -2</th>
+                    <th>Day -1</th>
+                    <th>Day 0</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for prescription in patient.prescriptions.all %}
+                    <tr>
+                        <td>{{ prescription.medication }}</td>
+                        <td>
+                            {% for dosage_time in prescription.dosage_times %}
+                                <p>{{ dosage_time|time:"H:i" }}</p>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for dosage_time in prescription.dosage_times %}
+                                <p>{{ dosage_time|time:"H:i" }}</p>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for dosage_time in prescription.dosage_times %}
+                                <p>{{ dosage_time|time:"H:i" }}</p>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for dosage_time in prescription.dosage_times %}
+                                <p>{{ dosage_time|time:"H:i" }}</p>
+                            {% endfor %}
+                        </td>
+                        <td>
+                            {% for dosage_time in prescription.dosage_times %}
+                                <p>{{ dosage_time|time:"H:i" }}</p>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 {% endblock content %}
