@@ -3,6 +3,12 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 
+# The window of time around the prescribed
+# time a patient can record a dosage video.
+# Units: seconds
+DOSAGE_TIME_WIGGLE_ROOM = 3600
+
+
 class Doctor(models.Model):
     user = models.OneToOneField(User)
 
@@ -32,6 +38,45 @@ class Patient(models.Model):
 
     def __str__(self):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)
+
+    def recordable_medications(self):
+        from datetime import datetime
+        medications = []
+        times = []
+        now = datetime.now()
+        for prescription in self.prescriptions.all():
+            for dosage_time in prescription.dosage_times:
+                time_dif = (dosage_time.hour - now.hour) * 3600 + (dosage_time.second - now.second)
+                if abs(time_dif) <= DOSAGE_TIME_WIGGLE_ROOM:
+                    medications.append(prescription.medication)
+                    times.append(dosage_time)
+        return medications, times
+
+    def next_medication(self):
+        from datetime import datetime, date, timedelta
+        time_to_next_medication = timedelta(days=2)
+        medications = []
+        now = datetime.now()
+        for prescription in self.prescriptions.all():
+            for dosage_time in prescription.dosage_times:
+                time_dif = datetime.combine(date.today(), dosage_time) - now
+                if (time_dif.seconds > 0) and (time_dif <= time_to_next_medication):
+                    if time_dif == time_to_next_medication:
+                        medications.append(prescription.medication)
+                    else:
+                        time_to_next_medication = time_dif
+                        medications = [prescription.medication, ]
+                    break
+        time_of_next_medication = (now + time_to_next_medication).time()
+        return medications, time_of_next_medication
+
+    def videos_for_date(self, date):
+        """For a given date, return the videos recorded for the patient's
+        prescriptions.
+
+        :param date: The date to get videos for.
+        :return: Not sure yet.
+        """
 
 
 class Video(models.Model):

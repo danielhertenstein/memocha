@@ -16,7 +16,21 @@ def index(request):
 @login_required
 def patient_dashboard(request):
     patient = Patient.objects.get(user=request.user)
-    return render(request, 'recorder/patient_dashboard.html', {'patient': patient})
+    recordable_meds, recordable_med_times = patient.recordable_medications()
+    recordable_med_times = [time.strftime('%H:%M') for time in recordable_med_times]
+    next_meds, next_med_time = patient.next_medication()
+    next_med_time = next_med_time.strftime('%H:%M')
+    return render(
+        request,
+        'recorder/patient_dashboard.html',
+        {
+            'patient': patient,
+            'next_meds': next_meds,
+            'next_med_time': next_med_time,
+            'recordable_meds': recordable_meds,
+            'recordable_med_times': recordable_med_times,
+        }
+    )
 
 
 @login_required

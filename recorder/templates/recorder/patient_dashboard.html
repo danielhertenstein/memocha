@@ -3,6 +3,9 @@
 {% block title %}Dashboard{%  endblock title %}
 
 {% block content %}
+    <div id="current_meds">
+    </div>
+
     <h2>Prescriptions</h2>
     {% for prescription in patient.prescriptions.all %}
         <p>{{ prescription }}</p>
@@ -56,3 +59,30 @@
         </table>
     </div>
 {% endblock content %}
+
+{% block extra-js %}
+    <script type="text/javascript">
+        $(function() {
+            var med_div = document.getElementById("current_meds");
+            var recordables = {{ recordable_meds|safe }};
+            if (recordables.length > 0) {
+                var medications = {{ recordable_meds|safe }};
+                var time = {{ recordable_med_times|safe }};
+                var heading = document.createTextNode("Recordable Medications");
+            } else {
+                medications = {{ next_meds|safe }};
+                time = ["{{ next_med_time|safe }}"];
+                heading = document.createTextNode("Next Medication");
+            }
+            var node = document.createElement("H2");
+            node.appendChild(heading);
+            med_div.appendChild(node);
+            for (i=0; i < medications.length; i++) {
+                node = document.createElement("P");
+                par = document.createTextNode(medications[i] + " at " + time[i]);
+                node.appendChild(par);
+                med_div.appendChild(node);
+            }
+        });
+    </script>
+{% endblock extra-js %}
