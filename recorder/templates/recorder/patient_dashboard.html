@@ -3,5 +3,8 @@
 {% block title %}Dashboard{%  endblock title %}
 
 {% block content %}
-    <p>User page</p>
+    <h2>Prescriptions</h2>
+    {% for prescription in patient.prescriptions.all %}
+        <p>{{ prescription }}</p>
+    {% endfor %}
 {% endblock content %}

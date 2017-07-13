@@ -15,7 +15,9 @@ def index(request):
 
 @login_required
 def patient_dashboard(request):
-    return render(request, 'recorder/patient_dashboard.html')
+    patient = Patient.objects.get(user=request.user)
+    return render(request, 'recorder/patient_dashboard.html', {'patient': patient})
+
 
 @login_required
 def doctor_dashboard(request):
@@ -42,10 +44,11 @@ def patient_creation(request):
                 )
                 for user in same_name_users:
                     if user.patient.date_of_birth == date_of_birth:
-                        message = ('An account with this information has '
-                                   'already been activated. Return to the home '
-                                   'screen and log in.')
+                        message = ('An account with this name and date of '
+                                   'birth has already been activated. Return '
+                                   'to the home screen and log in.')
                         form.add_error('__all__', message)
+                    break
                 else:
                     message = ('No matching patient record has been registered '
                                'by a doctor. Please contact your doctor to '
@@ -69,8 +72,7 @@ def patient_creation(request):
                     user.save()
 
                     login(request, user)
-                    return redirect('/recorder')
-                    #return redirect('/recorder/patient')
+                    return redirect('/recorder/patient')
     else:
         form = PatientAccountForm()
     return render(request, 'recorder/patient_creation.html', {'form': form})

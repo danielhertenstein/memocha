@@ -16,8 +16,12 @@ class Prescription(models.Model):
     dosage_times = ArrayField(models.TimeField())
 
     def __str__(self):
-        # TODO: Revisit when format is setup
-        return self.medication
+        time_string = ', '.join((time.strftime('%H:%M') for time in self.dosage_times))
+        return '{0}: Take {1} at {2}'.format(
+            self.medication,
+            self.dosage,
+            time_string
+        )
 
 
 class Patient(models.Model):
