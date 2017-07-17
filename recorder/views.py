@@ -15,6 +15,9 @@ def index(request):
 
 @login_required
 def patient_dashboard(request):
+    if request.method == 'POST':
+        test = request.POST["script_index"]
+        print('boo')
     patient = Patient.objects.get(user=request.user)
     recordable_meds, recordable_med_times = patient.recordable_medications()
     recordable_med_times = [time.strftime('%H:%M') for time in recordable_med_times]

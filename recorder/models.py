@@ -6,7 +6,7 @@ from django.contrib.postgres.fields import ArrayField
 # The window of time around the prescribed
 # time a patient can record a dosage video.
 # Units: seconds
-DOSAGE_TIME_WIGGLE_ROOM = 3600
+DOSAGE_TIME_WIGGLE_ROOM = 36000
 
 
 class Doctor(models.Model):

@@ -3,8 +3,9 @@
 {% block title %}Dashboard{%  endblock title %}
 
 {% block content %}
-    <div id="current_meds">
-    </div>
+    <form id="current_meds" method="post">
+        {% csrf_token %}
+    </form>
 
     <h2>Prescriptions</h2>
     {% for prescription in patient.prescriptions.all %}
@@ -69,19 +70,33 @@
                 var medications = {{ recordable_meds|safe }};
                 var time = {{ recordable_med_times|safe }};
                 var heading = document.createTextNode("Recordable Medications");
+                var node = document.createElement("H2");
+                node.appendChild(heading);
+                med_div.appendChild(node);
+                for (i=0; i < medications.length; i++) {
+                    node = document.createElement("P");
+                    par = document.createTextNode(medications[i] + " at " + time[i]);
+                    node.appendChild(par);
+                    med_div.appendChild(node);
+                    node = document.createElement("button");
+                    node.innerHTML = "Record Medication";
+                    node.setAttribute('name', 'script_index');
+                    node.setAttribute('value', i);
+                    med_div.appendChild(node);
+                }
             } else {
                 medications = {{ next_meds|safe }};
                 time = ["{{ next_med_time|safe }}"];
                 heading = document.createTextNode("Next Medication");
-            }
-            var node = document.createElement("H2");
-            node.appendChild(heading);
-            med_div.appendChild(node);
-            for (i=0; i < medications.length; i++) {
-                node = document.createElement("P");
-                par = document.createTextNode(medications[i] + " at " + time[i]);
-                node.appendChild(par);
+                node = document.createElement("H2");
+                node.appendChild(heading);
                 med_div.appendChild(node);
+                for (i=0; i < medications.length; i++) {
+                    node = document.createElement("P");
+                    par = document.createTextNode(medications[i] + " at " + time[i]);
+                    node.appendChild(par);
+                    med_div.appendChild(node);
+                }
             }
         });
     </script>
