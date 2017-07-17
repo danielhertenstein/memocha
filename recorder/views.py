@@ -15,9 +15,6 @@ def index(request):
 
 @login_required
 def patient_dashboard(request):
-    if request.method == 'POST':
-        test = request.POST["script_index"]
-        print('boo')
     patient = Patient.objects.get(user=request.user)
     recordable_meds, recordable_med_times = patient.recordable_medications()
     recordable_med_times = [time.strftime('%H:%M') for time in recordable_med_times]
@@ -182,3 +179,13 @@ def patient_details(request, patient_id):
         else:
             formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form')
     return render(request, 'recorder/patient_details.html', {'patient': patient, 'formset': formset})
+
+
+@login_required
+def record_video(request):
+    if request.method == 'GET':
+        return redirect('/recorder/patient')
+    if request.method == 'POST':
+        test = request.POST["script_index"]
+        print('boo')
+    return render(request, 'recorder/record_video.html')

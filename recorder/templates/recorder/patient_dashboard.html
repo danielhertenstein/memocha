@@ -3,7 +3,7 @@
 {% block title %}Dashboard{%  endblock title %}
 
 {% block content %}
-    <form id="current_meds" method="post">
+    <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
         {% csrf_token %}
     </form>
 
