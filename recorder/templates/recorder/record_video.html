@@ -1,10 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}Record Video{%  endblock title %}
+
+{% block content %}
+    <video autoplay muted></video>
+
+    <div>
+        <button id="record" disabled>Start Recording</button>
+        <button id="upload" disabled>Submit Video</button>
+    </div>
+{% endblock content %}
+
+{% block extra-js %}
+    {% load static %}
+    <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+    <script type="text/javascript" src="{% static 'recorder/video.js' %}"></script>
+{% endblock extra-js %}
