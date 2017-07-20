@@ -3,10 +3,12 @@
 {% block title %}Record Video{%  endblock title %}
 
 {% block content %}
-    <video autoplay></video>
+    <video id="recordVideo" autoplay></video>
+    <video id="playVideo" autoplay loop></video>
 
     <div>
         <button id="record" disabled>Start Recording</button>
+        <button id="upload" disabled>Upload</button>
     </div>
 {% endblock content %}
 

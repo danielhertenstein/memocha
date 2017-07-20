@@ -3,10 +3,13 @@
 var recordedBlobs;
 var mediaRecorder;
 
-var video = document.querySelector('video');
+var recordVideo = document.querySelector('video#recordVideo');
+var playVideo = document.querySelector('video#playVideo');
 
 var recordButton = document.querySelector('button#record');
+var uploadButton = document.querySelector('button#upload');
 recordButton.onclick = toggleRecording;
+uploadButton.onclick = upload;
 
 var constraints = {
     audio: true,
@@ -18,11 +21,12 @@ function handleSuccess(stream) {
     console.log('getUserMedia() got stream: ', stream);
     window.stream = stream;
     if (window.URL) {
-        video.src = window.URL.createObjectURL(stream);
+        recordVideo.src = window.URL.createObjectURL(stream);
     } else {
-        video.src = stream;
+        recordVideo.src = stream;
     }
-    video.muted = true;
+    recordVideo.muted = true;
+    playVideo.style.display = 'none';
 }
 
 function handleError(error) {
@@ -32,22 +36,43 @@ function handleError(error) {
 navigator.mediaDevices.getUserMedia(constraints).
     then(handleSuccess).catch(handleError);
 
+function handleDataAvailable(event) {
+    if (event.data && event.data.size > 0) {
+        recordedBlobs.push(event.data);
+    }
+}
+
+function handleStop(event) {
+    console.log('Recorder stopped: ', event);
+}
+
 function toggleRecording() {
-    if (recordButton.textContent === 'Start Recording') {
+    if (recordButton.textContent === 'Start Recording'
+        || recordButton.textContent === 'Record Again') {
+        playVideo.pause();
+        playVideo.currentTime = 0;
+        playVideo.style.display = 'none';
+        tracks = stream.getTracks();
+        for (var i = 0; i < tracks.length; i++) {
+            tracks[i].enabled = true;
+        }
+        recordVideo.style.display = '';
         startRecording();
     } else {
         stopRecording();
-        recordButton.textContent = 'Upload';
-        recordButton.onclick = upload;
+        console.log('before');
+        recordButton.textContent = 'Record Again';
+        console.log('after');
+        recordVideo.style.display = 'none';
         tracks = stream.getTracks();
         for (var i = 0; i < tracks.length; i++) {
-            tracks[i].stop()
+            tracks[i].enabled = false;
         }
-        video.loop = true;
-        video.controls = true;
-        video.muted = false;
+        playVideo.controls = true;
+        playVideo.style.display = '';
         var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
-        video.src = window.URL.createObjectURL(superBuffer);
+        playVideo.src = window.URL.createObjectURL(superBuffer);
+        uploadButton.disabled = false;
     }
 }
 
@@ -70,16 +95,6 @@ function startRecording() {
 function stopRecording() {
     mediaRecorder.stop();
     console.log('Recorded Blobs: ', recordedBlobs);
-}
-
-function handleDataAvailable(event) {
-    if (event.data && event.data.size > 0) {
-        recordedBlobs.push(event.data);
-    }
-}
-
-function handleStop(event) {
-    console.log('Recorder stopped: ', event);
 }
 
 function upload() {

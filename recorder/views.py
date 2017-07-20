@@ -187,5 +187,4 @@ def record_video(request):
         return redirect('/recorder/patient')
     if request.method == 'POST':
         test = request.POST["script_index"]
-        print('boo')
     return render(request, 'recorder/record_video.html')
