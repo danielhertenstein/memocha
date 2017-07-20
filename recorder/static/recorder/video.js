@@ -5,10 +5,8 @@ var mediaRecorder;
 
 var video = document.querySelector('video');
 
-var record_button = document.querySelector('button#record');
-var upload_button = document.querySelector('button#upload');
-record_button.onclick = toggleRecording;
-upload_button.onclick = upload;
+var recordButton = document.querySelector('button#record');
+recordButton.onclick = toggleRecording;
 
 var constraints = {
     audio: true,
@@ -16,7 +14,7 @@ var constraints = {
 };
 
 function handleSuccess(stream) {
-    record_button.disabled = false;
+    recordButton.disabled = false;
     console.log('getUserMedia() got stream: ', stream);
     window.stream = stream;
     if (window.URL) {
@@ -24,6 +22,7 @@ function handleSuccess(stream) {
     } else {
         video.src = stream;
     }
+    video.muted = true;
 }
 
 function handleError(error) {
@@ -34,12 +33,21 @@ navigator.mediaDevices.getUserMedia(constraints).
     then(handleSuccess).catch(handleError);
 
 function toggleRecording() {
-    if (record_button.textContent === 'Start Recording') {
+    if (recordButton.textContent === 'Start Recording') {
         startRecording();
     } else {
         stopRecording();
-        record_button.textContent = 'Start Recording';
-        upload_button.disabled = false;
+        recordButton.textContent = 'Upload';
+        recordButton.onclick = upload;
+        tracks = stream.getTracks();
+        for (var i = 0; i < tracks.length; i++) {
+            tracks[i].stop()
+        }
+        video.loop = true;
+        video.controls = true;
+        video.muted = false;
+        var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+        video.src = window.URL.createObjectURL(superBuffer);
     }
 }
 
@@ -53,7 +61,6 @@ function startRecording() {
     }
     console.log('Created MediaRecorder', mediaRecorder);
     recordButton.textContent = 'Stop Recording';
-    upload_button.disabled = true;
     mediaRecorder.onstop = handleStop;
     mediaRecorder.ondataavailable = handleDataAvailable;
     mediaRecorder.start(10); // 10ms blobs of data
