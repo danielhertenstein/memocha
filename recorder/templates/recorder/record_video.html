@@ -10,6 +10,12 @@
         <button id="record" disabled>Start Recording</button>
         <button id="upload" disabled>Upload</button>
     </div>
+
+    <form id="video_upload" method="post" enctype="multipart/form-data" action="">
+        {% csrf_token %}
+        {{ form.file.as_hidden }}
+        {{ form.script_index.as_hidden }}
+    </form>
 {% endblock content %}
 
 {% block extra-js %}

@@ -76,3 +76,8 @@ class PatientAccountForm(UserCreationForm):
             'password1',
             'password2',
         ]
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+    script_index = forms.IntegerField()

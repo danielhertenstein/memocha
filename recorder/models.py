@@ -84,7 +84,7 @@ class Video(models.Model):
     record_date = models.DateTimeField()
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     # TODO: Hook this up correctly.
-    upload = models.FileField()
+    upload = models.FileField(upload_to='videos/')
 
     def __str__(self):
         return "{0} {1} {2} {3}".format(

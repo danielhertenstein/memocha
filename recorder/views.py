@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory, modelformset_factory
 
-from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm
+from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm, UploadFileForm
 from recorder.models import Doctor, Patient, Prescription
 
 
@@ -185,6 +185,9 @@ def patient_details(request, patient_id):
 def record_video(request):
     if request.method == 'GET':
         return redirect('/recorder/patient')
-    if request.method == 'POST':
-        test = request.POST["script_index"]
-    return render(request, 'recorder/record_video.html')
+    test = request.body
+    script_index = request.POST["script_index"]
+    form = UploadFileForm(request.POST, request.FILES, initial={'script_index': script_index})
+    if form.is_valid():
+        print('boo')
+    return render(request, 'recorder/record_video.html', {'script_index': script_index, 'form': form})

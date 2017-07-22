@@ -3,6 +3,8 @@
 var recordedBlobs;
 var mediaRecorder;
 
+var form = document.querySelector('form');
+
 var recordVideo = document.querySelector('video#recordVideo');
 var playVideo = document.querySelector('video#playVideo');
 
@@ -60,9 +62,7 @@ function toggleRecording() {
         startRecording();
     } else {
         stopRecording();
-        console.log('before');
         recordButton.textContent = 'Record Again';
-        console.log('after');
         recordVideo.style.display = 'none';
         tracks = stream.getTracks();
         for (var i = 0; i < tracks.length; i++) {
@@ -98,5 +98,7 @@ function stopRecording() {
 }
 
 function upload() {
-    // Fill in.
+    my_blob = new Blob(recordedBlobs, {type: 'video/webm'});
+    form.file.value = my_blob;
+    form.submit();
 }
