@@ -22,7 +22,7 @@ function handleSuccess(stream) {
     console.log('getUserMedia() got stream: ', stream);
     window.stream = stream;
     if (window.URL) {
-        recordVideo.src = window.URL.createObjectURL(stream);
+        recordVideo.srcObject = stream;
     } else {
         recordVideo.src = stream;
     }
