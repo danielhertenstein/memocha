@@ -11,7 +11,6 @@ var playVideo = document.querySelector('video#playVideo');
 var recordButton = document.querySelector('button#record');
 var uploadButton = document.querySelector('button#upload');
 recordButton.onclick = toggleRecording;
-uploadButton.onclick = upload;
 
 var constraints = {
     audio: true,
@@ -97,8 +96,16 @@ function stopRecording() {
     console.log('Recorded Blobs: ', recordedBlobs);
 }
 
-function upload() {
+$("form#video_upload").submit(function() {
+    var formData = new FormData(this);
     my_blob = new Blob(recordedBlobs, {type: 'video/webm'});
-    form.file.value = my_blob;
-    form.submit();
-}
+    formData.append('fname', 'my_video.webm');
+    formData.append('data', my_blob);
+    $.ajax({
+        type: 'POST',
+        url: '/recorder/patient/record',
+        data: formData,
+        processData: false,
+        contentType: false
+    });
+});

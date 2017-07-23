@@ -185,7 +185,6 @@ def patient_details(request, patient_id):
 def record_video(request):
     if request.method == 'GET':
         return redirect('/recorder/patient')
-    test = request.body
     script_index = request.POST["script_index"]
     form = UploadFileForm(request.POST, request.FILES, initial={'script_index': script_index})
     if form.is_valid():

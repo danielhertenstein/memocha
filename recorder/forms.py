@@ -79,5 +79,4 @@ class PatientAccountForm(UserCreationForm):
 
 
 class UploadFileForm(forms.Form):
-    file = forms.FileField()
     script_index = forms.IntegerField()
