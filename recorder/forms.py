@@ -79,4 +79,4 @@ class PatientAccountForm(UserCreationForm):
 
 
 class UploadFileForm(forms.Form):
-    script_index = forms.IntegerField()
+    medication = forms.CharField(max_length=100)

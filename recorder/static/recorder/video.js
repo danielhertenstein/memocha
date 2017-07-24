@@ -108,4 +108,5 @@ $("form#video_upload").submit(function() {
         processData: false,
         contentType: false
     });
+    return false;
 });

@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory, modelformset_factory
 
 from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm, UploadFileForm
-from recorder.models import Doctor, Patient, Prescription
+from recorder.models import Doctor, Patient, Prescription, Video
 
 
 def index(request):
@@ -183,10 +183,19 @@ def patient_details(request, patient_id):
 
 @login_required
 def record_video(request):
+    from datetime import datetime
+
     if request.method == 'GET':
         return redirect('/recorder/patient')
-    script_index = request.POST["script_index"]
-    form = UploadFileForm(request.POST, request.FILES, initial={'script_index': script_index})
-    if form.is_valid():
-        print('boo')
-    return render(request, 'recorder/record_video.html', {'script_index': script_index, 'form': form})
+    medication = request.POST['medication']
+    form = UploadFileForm(request.POST, request.FILES, initial={'medication': medication})
+    if form.is_valid() and request.FILES:
+#       patient = Patient.objects.get(user=request.user)
+#       video = Video(
+#           person=patient,
+#           record_date=datetime.now(),
+#           prescription=patient.prescriptions.get(medication=medication),
+#           upload=request.FILES['data']
+#       )
+        return redirect('/recorder/patient/', permanent=True)
+    return render(request, 'recorder/record_video.html', {'form': form})

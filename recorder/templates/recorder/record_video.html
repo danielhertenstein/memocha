@@ -10,6 +10,7 @@
         <button id="record" disabled>Start Recording</button>
         <form id="video_upload" method="post" action="">
             {% csrf_token %}
+            {{ form.medication.as_hidden }}
             <button id="upload" disabled>Upload</button>
         </form>
     </div>
