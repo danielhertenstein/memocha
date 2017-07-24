@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -183,19 +184,20 @@ def patient_details(request, patient_id):
 
 @login_required
 def record_video(request):
-    from datetime import datetime
 
     if request.method == 'GET':
         return redirect('/recorder/patient')
     medication = request.POST['medication']
     form = UploadFileForm(request.POST, request.FILES, initial={'medication': medication})
     if form.is_valid() and request.FILES:
-#       patient = Patient.objects.get(user=request.user)
-#       video = Video(
-#           person=patient,
-#           record_date=datetime.now(),
-#           prescription=patient.prescriptions.get(medication=medication),
-#           upload=request.FILES['data']
-#       )
-        return redirect('/recorder/patient/', permanent=True)
+        patient = Patient.objects.get(user=request.user)
+        video = Video(
+            person=patient,
+            record_date=datetime.now(),
+            prescription=patient.prescriptions.get(medication=medication),
+            upload=request.FILES['data']
+        )
+        video.save()
+        # No need to redirect here since the AJAX request in video.js does it
+        # for us. The AJAX request will redirect to the patient dashboard.
     return render(request, 'recorder/record_video.html', {'form': form})

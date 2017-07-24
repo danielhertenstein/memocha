@@ -106,7 +106,10 @@ $("form#video_upload").submit(function() {
         url: '/recorder/patient/record',
         data: formData,
         processData: false,
-        contentType: false
+        contentType: false,
+        success: function() {
+            window.location.href = '/recorder/patient';
+        }
     });
     return false;
 });
