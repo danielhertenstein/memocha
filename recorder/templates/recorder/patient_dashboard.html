@@ -50,7 +50,11 @@
                             {% endfor %}
                         </td>
                         <td>
+                            <!-- Day 0 -->
                             {% for dosage_time in prescription.dosage_times %}
+                                {% if %}
+
+                                {% endif %}
                                 <p>{{ dosage_time|time:"H:i" }}</p>
                             {% endfor %}
                         </td>

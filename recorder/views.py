@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -21,6 +21,11 @@ def patient_dashboard(request):
     recordable_med_times = [time.strftime('%H:%M') for time in recordable_med_times]
     next_meds, next_med_time = patient.next_medication()
     next_med_time = next_med_time.strftime('%H:%M')
+    d0_videos = patient.videos_for_date(datetime.today().date())
+    d1_videos = patient.videos_for_date((datetime.today() - timedelta(days=1)).date())
+    d2_videos = patient.videos_for_date((datetime.today() - timedelta(days=2)).date())
+    d3_videos = patient.videos_for_date((datetime.today() - timedelta(days=3)).date())
+    d4_videos = patient.videos_for_date((datetime.today() - timedelta(days=4)).date())
     return render(
         request,
         'recorder/patient_dashboard.html',
@@ -30,6 +35,11 @@ def patient_dashboard(request):
             'next_med_time': next_med_time,
             'recordable_meds': recordable_meds,
             'recordable_med_times': recordable_med_times,
+            'd0_videos': d0_videos,
+            'd1_videos': d1_videos,
+            'd2_videos': d2_videos,
+            'd3_videos': d3_videos,
+            'd4_videos': d4_videos,
         }
     )
 

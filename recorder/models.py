@@ -77,6 +77,7 @@ class Patient(models.Model):
         :param date: The date to get videos for.
         :return: Not sure yet.
         """
+        return self.video_set.filter(record_date__date=date)
 
 
 class Video(models.Model):
