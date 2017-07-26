@@ -1,3 +1,4 @@
+import json
 from datetime import datetime, timedelta
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -5,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.forms import formset_factory, modelformset_factory
+from django.core.serializers.json import DjangoJSONEncoder
 
 from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm, UploadFileForm
 from recorder.models import Doctor, Patient, Prescription, Video
@@ -26,6 +28,8 @@ def patient_dashboard(request):
     d2_videos = patient.videos_for_date((datetime.today() - timedelta(days=2)).date())
     d3_videos = patient.videos_for_date((datetime.today() - timedelta(days=3)).date())
     d4_videos = patient.videos_for_date((datetime.today() - timedelta(days=4)).date())
+    prescriptions = patient.prescriptions.all().values_list()
+    prescriptions_json = json.dumps(list(prescriptions), cls=DjangoJSONEncoder)
     return render(
         request,
         'recorder/patient_dashboard.html',
@@ -40,6 +44,7 @@ def patient_dashboard(request):
             'd2_videos': d2_videos,
             'd3_videos': d3_videos,
             'd4_videos': d4_videos,
+            'prescriptions': prescriptions_json,
         }
     )
 
