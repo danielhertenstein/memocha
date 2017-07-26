@@ -53,7 +53,7 @@ function toggleRecording() {
         playVideo.pause();
         playVideo.currentTime = 0;
         playVideo.style.display = 'none';
-        tracks = stream.getTracks();
+        var tracks = stream.getTracks();
         for (var i = 0; i < tracks.length; i++) {
             tracks[i].enabled = true;
         }
@@ -64,12 +64,12 @@ function toggleRecording() {
         recordButton.textContent = 'Record Again';
         recordVideo.style.display = 'none';
         tracks = stream.getTracks();
-        for (var i = 0; i < tracks.length; i++) {
+        for (i = 0; i < tracks.length; i++) {
             tracks[i].enabled = false;
         }
         playVideo.controls = true;
         playVideo.style.display = '';
-        var superBuffer = new Blob(recordedBlobs, {type: 'video/webm'});
+        var superBuffer = new Blob(recordedBlobs, {type: 'video/mp4'});
         playVideo.src = window.URL.createObjectURL(superBuffer);
         uploadButton.disabled = false;
     }
@@ -78,7 +78,8 @@ function toggleRecording() {
 function startRecording() {
     recordedBlobs = [];
     try {
-        mediaRecorder = new MediaRecorder(window.stream);
+        options = {mimeType: 'video/webm;codecs=h264'};
+        mediaRecorder = new MediaRecorder(window.stream, options);
     } catch(e) {
         console.error('Exception while creating MediaRecorder: ' + e);
         return;
@@ -98,9 +99,9 @@ function stopRecording() {
 
 $("form#video_upload").submit(function() {
     var formData = new FormData(this);
-    my_blob = new Blob(recordedBlobs, {type: 'video/webm'});
-    formData.append('fname', 'my_video.webm');
-    formData.append('data', my_blob);
+    var my_blob = new Blob(recordedBlobs, {type: 'video/mp4'});
+    var my_file = new File([my_blob], 'video.mp4');
+    formData.append('data', my_file);
     $.ajax({
         type: 'POST',
         url: '/recorder/patient/record',
