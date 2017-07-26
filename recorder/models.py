@@ -87,6 +87,24 @@ class Video(models.Model):
     # TODO: Hook this up correctly.
     upload = models.FileField(upload_to='videos/')
 
+    def corresponding_dosage(self):
+        record_hour = self.record_date.hour
+        record_second = self.record_date.second
+        possible_times = self.prescription.dosage_times
+        timeslot = min(
+            possible_times,
+            key= lambda time: abs(
+                (record_hour - time.hour) * 3600
+                + (record_second - time.second)
+            )
+        )
+        return {
+            'medication': self.prescription.medication,
+            'date': self.record_date.date().strftime('%d %b'),
+            'timeslot': timeslot.strftime('%H:%M'),
+            'url': self.upload.url
+        }
+
     def __str__(self):
         return "{0} {1} {2} {3}".format(
             self.person.user.first_name,

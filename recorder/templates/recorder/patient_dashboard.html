@@ -59,10 +59,13 @@
         });
 
         $(function() {
+            var videos = {{ video_dict|safe }};
+            var dates = {{ dates_of_interest|safe }};
+
             var table = document.getElementById("video_table");
             var header = table.createTHead();
             var row = header.insertRow(-1);
-            var header_cells = ["Medication", "Day -4", "Day -3", "Day -2", "Day -1", "Day 0"];
+            var header_cells = ["Medication"].concat(dates);
             for (i=0; i < header_cells.length; i++) {
                 var cell = row.insertCell(-1);
                 cell.innerHTML = header_cells[i];
@@ -73,16 +76,36 @@
                 row = table.insertRow(-1);
                 cell = row.insertCell(-1);
                 cell.innerHTML = prescription[1];
-                for (j=0; j < header_cells.length - 1; j++) {
+                for (j=1; j < header_cells.length; j++) {
                     cell = row.insertCell(-1);
                     var times = prescription[3];
                     for (k=0; k < times.length; k++) {
-                        var node = document.createElement("P");
-                        node.innerHTML = times[k];
-                        cell.appendChild(node);
+                        var real_time = times[k].substring(0, times[k].length - 3);
+                        if (checkNested(videos, header_cells[j], prescription[1], real_time)) {
+                            var node = document.createElement("A");
+                            node.innerHTML = real_time;
+                            node.href = videos[header_cells[j]][prescription[1]][real_time];
+                            cell.appendChild(node);
+                        } else {
+                            node = document.createElement("P");
+                            node.innerHTML = real_time;
+                            cell.appendChild(node);
+                        }
                     }
                 }
             }
         });
+
+        function checkNested(obj) {
+            var args = Array.prototype.slice.call(arguments, 1);
+
+            for (var i=0; i < args.length; i++) {
+                if (!obj || !obj.hasOwnProperty(args[i])) {
+                    return false;
+                }
+                obj = obj[args[i]];
+            }
+            return true;
+        }
     </script>
 {% endblock extra-js %}
