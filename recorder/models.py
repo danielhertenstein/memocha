@@ -3,10 +3,10 @@ from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 
-# The window of time around the prescribed
+# The window of time on either side of the prescribed
 # time a patient can record a dosage video.
 # Units: seconds
-DOSAGE_TIME_WIGGLE_ROOM = 36000
+DOSAGE_TIME_WIGGLE_ROOM = 1800
 
 
 class Doctor(models.Model):
@@ -40,14 +40,21 @@ class Patient(models.Model):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)
 
     def recordable_medications(self):
-        from datetime import datetime
+        from datetime import datetime, timedelta
         medications = []
         times = []
         now = datetime.now()
+        already_recorded = self.videos_for_date(now.date())
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
                 time_dif = (dosage_time.hour - now.hour) * 3600 + (dosage_time.second - now.second)
                 if abs(time_dif) <= DOSAGE_TIME_WIGGLE_ROOM:
+                    # Check to see if the video has already been recorded
+                    dosage_datetime = datetime.combine(now.date(), dosage_time)
+                    start_time = dosage_datetime - timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
+                    end_time = dosage_datetime + timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
+                    if already_recorded.filter(record_date__range=(start_time, end_time)):
+                        continue
                     medications.append(prescription.medication)
                     times.append(dosage_time)
         return medications, times
@@ -84,7 +91,6 @@ class Video(models.Model):
     person = models.ForeignKey(Patient, on_delete=models.CASCADE)
     record_date = models.DateTimeField()
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
-    # TODO: Hook this up correctly.
     upload = models.FileField(upload_to='videos/')
 
     def corresponding_dosage(self):
