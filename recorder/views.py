@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import partial
 
+from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
@@ -178,6 +179,15 @@ def add_patient(request):
 def patient_details(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
     if request.method == 'POST':
+        # Remove the patient
+        if request.POST['action'] == 'remove':
+            # Deleting the user will delete the patient
+            patient.user.delete()
+            # But we also need to delete any prescriptions
+            # that are no longer related to anyone
+            Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
+            return redirect('/recorder/doctor')
+
         # A set to keep track of which previously existing prescriptions are in
         # the new formset.
         existing_prescriptions = set([prescription.pk for prescription in patient.prescriptions.all()])
@@ -202,7 +212,9 @@ def patient_details(request, patient_id):
             # Any keys left in the existing_prescriptions set were not present
             # in the formset and we can assume they have been removed.
             for prescription in existing_prescriptions:
-                patient.prescriptions.get(pk=prescription).delete()
+                patient.prescriptions.remove(pk=prescription)
+            # Delete any prescriptions that are no longer related to anyone
+            Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
             return redirect('/recorder/doctor')
     else:
         if patient.prescriptions.all():

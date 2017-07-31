@@ -31,7 +31,7 @@ class Prescription(models.Model):
 
 
 class Patient(models.Model):
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE)
     date_of_birth = models.DateField()
     prescriptions = models.ManyToManyField(Prescription, blank=True)
