@@ -20,10 +20,13 @@
     </form>
 
     <h3>Awaiting Approval</h3>
-    <div class="table-responsive">
-        <table id="approval_table" class="table">
-        </table>
-    </div>
+    <form id="approval" method="post">
+        {% csrf_token %}
+        <div class="table-responsive">
+            <table id="approval_table" class="table">
+            </table>
+        </div>
+    </form>
 
     <h3>Video History</h3>
     <div class="table-responsive">
@@ -68,6 +71,19 @@
                 disapprove_button.innerHTML = "Disapprove";
                 cell.appendChild(disapprove_button);
             }
+        });
+
+        $('form#approval').submit(function() {
+           var formData = new FormData(this);
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'recorder:patient_details' patient.id %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function() {}
+            });
+            return false;
         });
 
         $(function() {
