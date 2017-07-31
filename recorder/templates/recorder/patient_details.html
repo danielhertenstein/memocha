@@ -7,6 +7,7 @@
         {% csrf_token %}
         <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
         <p>Date of birth: {{ patient.date_of_birth }}</p>
+        <p>Email Address: {{ patient.user.email }}</p>
         <h3>Prescriptions</h3>
         {{ formset.management_form }}
         {% for form in formset %}
@@ -14,10 +15,16 @@
                 {{ form.as_table }}
             </div>
         {% endfor %}
-        <h3>Videos</h3>
+        <br />
+        <button class="btn btn-primary" type="submit" name="action" value="update">Update Patient</button>
+        <h3>Awaiting Approval</h3>
+        <h3>Video History</h3>
+        <div class="table-responsive">
+            <table id="video_table" class="table">
+            </table>
+        </div>
         <br />
         <button class="btn" type="submit" name="action" value="remove">Remove Patient</button>
-        <button class="btn btn-primary" type="submit" name="action" value="update">Update Patient</button>
     </form>
 {% endblock content %}
 
@@ -31,6 +38,57 @@
                 addText: 'Add Prescription',
                 deleteText: 'remove'
             })
-        })
+        });
+
+        $(function() {
+            var videos = {{ video_dict|safe }};
+            var dates = {{ dates_of_interest|safe }};
+            var prescriptions = {{ prescriptions|safe }};
+
+            var table = document.getElementById("video_table");
+            var header = table.createTHead();
+            var row = header.insertRow(-1);
+            var cell = row.insertCell(-1);
+            cell.innerHTML = "Date";
+            for (i=0; i < prescriptions.length; i++) {
+                cell = row.insertCell(-1);
+                cell.innerHTML = prescriptions[i][1];
+            }
+            for (i=dates.length-1; i >= 0; i--) {
+                var date = dates[i];
+                row = table.insertRow(-1);
+                cell = row.insertCell(-1);
+                cell.innerHTML = date;
+                for (j=0; j < prescriptions.length; j++) {
+                    var times = prescriptions[j][3];
+                    cell = row.insertCell(-1);
+                    for (k=0; k < times.length; k++) {
+                        var real_time = times[k].substring(0, times[k].length - 3);
+                        if (checkNested(videos, date, prescriptions[j][1], real_time)) {
+                            var node = document.createElement("A");
+                            node.innerHTML = real_time;
+                            node.href = videos[date][prescriptions[j][1]][real_time];
+                            cell.appendChild(node);
+                        } else {
+                            node = document.createElement("P");
+                            node.innerHTML = real_time;
+                            cell.appendChild(node);
+                        }
+                    }
+                }
+            }
+        });
+
+        function checkNested(obj) {
+            var args = Array.prototype.slice.call(arguments, 1);
+
+            for (var i=0; i < args.length; i++) {
+                if (!obj || !obj.hasOwnProperty(args[i])) {
+                    return false;
+                }
+                obj = obj[args[i]];
+            }
+            return true;
+        }
     </script>
 {% endblock extra-js %}
