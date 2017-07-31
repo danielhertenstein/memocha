@@ -58,6 +58,8 @@ def patient_dashboard(request):
 
 @login_required
 def doctor_dashboard(request):
+    if not request.user.groups.filter(name='Doctors').exists():
+        return redirect('/accounts/login?next={0}'.format(request.path))
     doctor = Doctor.objects.get(user=request.user)
     patients = doctor.patient_set.all()
     return render(request, 'recorder/doctor_dashboard.html', {'patients': patients})
@@ -172,6 +174,8 @@ def add_patient(request):
 
 @login_required
 def patient_details(request, patient_id):
+    if not request.user.groups.filter(name='Patients').exists():
+        return redirect('/accounts/login?next={0}'.format(request.path))
     patient = get_object_or_404(Patient, pk=patient_id)
     if request.method == 'POST':
         # A set to keep track of which previously existing prescriptions are in
