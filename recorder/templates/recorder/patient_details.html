@@ -3,7 +3,7 @@
 {% block title %}Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}{%  endblock title %}
 
 {% block content %}
-    <form method="post">
+    <form id="prescriptions" method="post">
         {% csrf_token %}
         <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
         <p>Date of birth: {{ patient.date_of_birth }}</p>
@@ -16,15 +16,19 @@
             </div>
         {% endfor %}
         <br />
-        <button class="btn btn-primary" type="submit" name="action" value="update">Update Patient</button>
-        <h3>Awaiting Approval</h3>
-        <h3>Video History</h3>
-        <div class="table-responsive">
-            <table id="video_table" class="table">
-            </table>
-        </div>
-        <br />
-        <button class="btn" type="submit" name="action" value="remove">Remove Patient</button>
+        <button class="btn btn-primary">Update Patient</button>
+    </form>
+
+    <h3>Awaiting Approval</h3>
+    <h3>Video History</h3>
+    <div class="table-responsive">
+        <table id="video_table" class="table">
+        </table>
+    </div>
+
+    <form id="removal" method="post">
+        {% csrf_token %}
+        <button class="btn">Remove Patient</button>
     </form>
 {% endblock content %}
 
@@ -90,5 +94,21 @@
             }
             return true;
         }
+
+        $('form#removal').submit(function() {
+            var formData = new FormData(this);
+            formData.append('action', 'remove');
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'recorder:patient_details' patient.id %}",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function() {
+                    window.location.href = '/recorder/doctor';
+                }
+            });
+            return false;
+        });
     </script>
 {% endblock extra-js %}

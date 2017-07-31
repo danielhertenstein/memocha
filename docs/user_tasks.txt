@@ -15,9 +15,9 @@ Doctor user tasks:
     Get Doctor model assigned
     Create Patient instances
     Edit Patient prescriptions
-Remove Patient
-Look at Patient recording history
-Watch Patient videos
+    Remove Patient
+    Look at Patient recording history
+    Watch Patient videos
 Approve Patient videos
 Disapprove Patient videos
     Log Out
