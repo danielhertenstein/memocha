@@ -4,7 +4,7 @@ from collections import defaultdict
 from functools import partial
 
 from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -120,6 +120,8 @@ def doctor_creation(request):
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            group = Group.objects.get(name='Doctors')
+            user.groups.add(group)
             doctor = Doctor.objects.create(user=user)
             user = authenticate(
                 username=doctor.user.username,
@@ -151,6 +153,8 @@ def add_patient(request):
                 password=password,
                 email=email,
             )
+            group = Group.objects.get(name='Patients')
+            user.groups.add(group)
             patient = Patient.objects.create(
                 user=user,
                 doctor=request.user.doctor,
