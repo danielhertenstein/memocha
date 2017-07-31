@@ -20,6 +20,11 @@
     </form>
 
     <h3>Awaiting Approval</h3>
+    <div class="table-responsive">
+        <table id="approval_table" class="table">
+        </table>
+    </div>
+
     <h3>Video History</h3>
     <div class="table-responsive">
         <table id="video_table" class="table">
@@ -42,6 +47,27 @@
                 addText: 'Add Prescription',
                 deleteText: 'remove'
             })
+        });
+
+        $(function() {
+            var table = document.getElementById("approval_table");
+            var videos = {{ approval_needed|safe }};
+            for (i=0; i < videos.length; i++) {
+                var row = table.insertRow(-1);
+                var cell = row.insertCell(-1);
+                var link = document.createElement("A");
+                link.innerHTML = videos[i].medication + " at " + videos[i].timeslot + " on " + videos[i].date;
+                link.href = videos[i].url;
+                cell.appendChild(link);
+                cell = row.insertCell(-1);
+                var approve_button = document.createElement("BUTTON");
+                approve_button.innerHTML = "Approve";
+                cell.appendChild(approve_button);
+                cell = row.insertCell(-1);
+                var disapprove_button = document.createElement("BUTTON");
+                disapprove_button.innerHTML = "Disapprove";
+                cell.appendChild(disapprove_button);
+            }
         });
 
         $(function() {

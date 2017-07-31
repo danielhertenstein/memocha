@@ -233,6 +233,7 @@ def patient_details(request, patient_id):
     video_dict_json = json.dumps(video_dict)
     prescriptions = list(patient.prescriptions.all().values_list())
     prescriptions_json = json.dumps(prescriptions, cls=DjangoJSONEncoder)
+    approval_needed = [video.corresponding_dosage() for video in patient.videos_to_be_approved()]
     return render(request, 'recorder/patient_details.html',
                   {
                       'patient': patient,
@@ -240,6 +241,7 @@ def patient_details(request, patient_id):
                       'dates_of_interest': [date.strftime('%d %b') for date in dates_of_interest],
                       'video_dict': video_dict_json,
                       'prescriptions': prescriptions_json,
+                      'approval_needed': approval_needed,
                   })
 
 

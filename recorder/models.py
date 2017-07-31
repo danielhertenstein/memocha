@@ -86,12 +86,17 @@ class Patient(models.Model):
         """
         return self.video_set.filter(record_date__date=date)
 
+    def videos_to_be_approved(self):
+        """Gets the queryset of videos that still need to be approved."""
+        return self.video_set.filter(approved=None)
+
 
 class Video(models.Model):
     person = models.ForeignKey(Patient, on_delete=models.CASCADE)
     record_date = models.DateTimeField()
     prescription = models.ForeignKey(Prescription, on_delete=models.CASCADE)
     upload = models.FileField(upload_to='videos/')
+    approved = models.NullBooleanField()
 
     def corresponding_dosage(self):
         record_hour = self.record_date.hour
