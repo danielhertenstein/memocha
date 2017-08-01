@@ -3,12 +3,13 @@
 {% block title %}Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}{%  endblock title %}
 
 {% block content %}
+    <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
+    <p>Date of birth: {{ patient.date_of_birth }}</p>
+    <p>Email Address: {{ patient.user.email }}</p>
+
+    <h3>Prescriptions</h3>
     <form id="prescriptions" method="post">
         {% csrf_token %}
-        <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
-        <p>Date of birth: {{ patient.date_of_birth }}</p>
-        <p>Email Address: {{ patient.user.email }}</p>
-        <h3>Prescriptions</h3>
         {{ formset.management_form }}
         {% for form in formset %}
             <div id="{{ form.prefix }}-row">
@@ -45,7 +46,7 @@
     <script type="text/javascript" src="{% static 'recorder/jquery.formset.js' %}"></script>
     <script type="text/javascript">
         $(function() {
-            $('form div').formset({
+            $('form#prescriptions div').formset({
                 prefix: 'p_form',
                 addText: 'Add Prescription',
                 deleteText: 'remove'
@@ -55,35 +56,58 @@
         $(function() {
             var table = document.getElementById("approval_table");
             var videos = {{ approval_needed|safe }};
-            for (i=0; i < videos.length; i++) {
+            if (videos.length === 0) {
                 var row = table.insertRow(-1);
                 var cell = row.insertCell(-1);
-                var link = document.createElement("A");
-                link.innerHTML = videos[i].medication + " at " + videos[i].timeslot + " on " + videos[i].date;
-                link.href = videos[i].url;
-                cell.appendChild(link);
-                cell = row.insertCell(-1);
-                var approve_button = document.createElement("BUTTON");
-                approve_button.innerHTML = "Approve";
-                cell.appendChild(approve_button);
-                cell = row.insertCell(-1);
-                var disapprove_button = document.createElement("BUTTON");
-                disapprove_button.innerHTML = "Disapprove";
-                cell.appendChild(disapprove_button);
+                var node = document.createElement("P");
+                node.innerHTML = "None";
+                cell.appendChild(node);
+            } else {
+                for (i=0; i < videos.length; i++) {
+                    row = table.insertRow(-1);
+                    cell = row.insertCell(-1);
+                    var link = document.createElement("A");
+                    link.innerHTML = videos[i].medication + " at " + videos[i].timeslot + " on " + videos[i].date;
+                    link.href = videos[i].url;
+                    cell.appendChild(link);
+                    cell = row.insertCell(-1);
+                    var approve_button = document.createElement("BUTTON");
+                    approve_button.innerHTML = "Approve";
+                    approve_button.name = 'approve';
+                    approve_button.value = i;
+                    cell.appendChild(approve_button);
+                    cell = row.insertCell(-1);
+                    var disapprove_button = document.createElement("BUTTON");
+                    disapprove_button.innerHTML = "Disapprove";
+                    disapprove_button.name = 'disapprove';
+                    disapprove_button.value = i;
+                    cell.appendChild(disapprove_button);
+                }
             }
         });
 
-        $('form#approval').submit(function() {
-           var formData = new FormData(this);
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'recorder:patient_details' patient.id %}",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function() {}
+        $(document).ready(function() {
+            $('form#approval').on("submit", function() {
+                var formData = new FormData(this);
+                var btn = $('button[clicked=true]');
+                formData.append(btn.attr('name'), btn.val());
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'recorder:patient_details' patient.id %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        window.location.href = "{% url 'recorder:patient_details' patient.id %}";
+                    }
+                });
+                return false;
             });
-            return false;
+
+            $('form#approval button').on("click", function() {
+                $('button', $(this).parents('form')).removeAttr('clicked');
+                $(this).attr('clicked', 'true');
+            });
         });
 
         $(function() {

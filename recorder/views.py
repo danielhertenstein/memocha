@@ -179,49 +179,59 @@ def add_patient(request):
 @login_required
 def patient_details(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
+    approval_videos = patient.videos_to_be_approved()
+    approval_needed = [video.corresponding_dosage() for video in approval_videos]
     if request.method == 'POST':
         # Remove the patient
-        if request.POST['action'] == 'remove':
+        if request.POST.get('action', ) == 'remove':
             # Deleting the user will delete the patient
             patient.user.delete()
             # But we also need to delete any prescriptions
             # that are no longer related to anyone
             Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
             return redirect('/recorder/doctor')
-
-        # A set to keep track of which previously existing prescriptions are in
-        # the new formset.
-        existing_prescriptions = set([prescription.pk for prescription in patient.prescriptions.all()])
-        formset = formset_factory(PrescriptionForm)(request.POST, prefix='p_form')
-        if formset.is_valid():
-            for form in formset:
-                # Check to see if the form matches an existing prescription.
-                matching_prescriptions = patient.prescriptions.filter(
-                    medication=form.cleaned_data['medication'],
-                    dosage=form.cleaned_data['dosage'],
-                    dosage_times=form.cleaned_data['dosage_times']
-                )
-                if matching_prescriptions:
-                    # Remove the matching prescription from the tracker.
-                    for prescription in matching_prescriptions:
-                        existing_prescriptions.remove(prescription.pk)
-                    # Don't need to add this one because it already exists.
-                    continue
-                # Add the new prescription.
-                prescription = form.save()
-                patient.prescriptions.add(prescription)
-            # Any keys left in the existing_prescriptions set were not present
-            # in the formset and we can assume they have been removed.
-            for prescription in existing_prescriptions:
-                patient.prescriptions.remove(pk=prescription)
-            # Delete any prescriptions that are no longer related to anyone
-            Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
-            return redirect('/recorder/doctor')
+        elif 'approve' in request.POST:
+            video = approval_videos[int(request.POST['approve'])]
+            video.approved = True
+            video.save()
+        elif 'disapprove' in request.POST:
+            video = approval_videos[int(request.POST['disapprove'])]
+            video.approved = False
+            video.save()
+        else:  # Update Patient was clicked to update prescriptions
+            # A set to keep track of which previously existing prescriptions
+            # are in the new formset
+            existing_prescriptions = set([prescription.pk for prescription in patient.prescriptions.all()])
+            formset = formset_factory(PrescriptionForm)(request.POST, prefix='p_form')
+            if formset.is_valid():
+                for form in formset:
+                    # Check to see if the form matches an existing prescription
+                    matching_prescriptions = patient.prescriptions.filter(
+                        medication=form.cleaned_data['medication'],
+                        dosage=form.cleaned_data['dosage'],
+                        dosage_times=form.cleaned_data['dosage_times']
+                    )
+                    if matching_prescriptions:
+                        # Remove the matching prescription from the tracker
+                        for prescription in matching_prescriptions:
+                            existing_prescriptions.remove(prescription.pk)
+                        # Don't need to add this one because it already exists
+                        continue
+                    # Add the new prescription.
+                    prescription = form.save()
+                    patient.prescriptions.add(prescription)
+                # Any keys left in the existing_prescriptions set were not
+                # present in the formset and we can assume they have been
+                # removed
+                for prescription in existing_prescriptions:
+                    patient.prescriptions.remove(pk=prescription)
+                # Delete any prescriptions that are no longer related to anyone
+                Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
+                return redirect('/recorder/doctor')
+    if patient.prescriptions.all():
+        formset = modelformset_factory(Prescription, fields='__all__', extra=0)(prefix='p_form', queryset=patient.prescriptions.all())
     else:
-        if patient.prescriptions.all():
-            formset = modelformset_factory(Prescription, fields='__all__', extra=0)(prefix='p_form', queryset=patient.prescriptions.all())
-        else:
-            formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form')
+        formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form')
     video_dict = defaultdict(partial(defaultdict, partial(defaultdict, dict)))
     dates_of_interest = [(patient.user.date_joined + timedelta(days=i)).date()
                          for i in range(int((timezone.now() - patient.user.date_joined).days)+1)]
@@ -233,7 +243,6 @@ def patient_details(request, patient_id):
     video_dict_json = json.dumps(video_dict)
     prescriptions = list(patient.prescriptions.all().values_list())
     prescriptions_json = json.dumps(prescriptions, cls=DjangoJSONEncoder)
-    approval_needed = [video.corresponding_dosage() for video in patient.videos_to_be_approved()]
     return render(request, 'recorder/patient_details.html',
                   {
                       'patient': patient,

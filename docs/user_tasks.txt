@@ -18,6 +18,6 @@ Doctor user tasks:
     Remove Patient
     Look at Patient recording history
     Watch Patient videos
-Approve Patient videos
-Disapprove Patient videos
+    Approve Patient videos
+    Disapprove Patient videos
     Log Out
