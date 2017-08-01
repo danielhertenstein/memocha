@@ -50,10 +50,8 @@
                 prefix: 'p_form',
                 addText: 'Add Prescription',
                 deleteText: 'remove'
-            })
-        });
+            });
 
-        $(function() {
             var table = document.getElementById("approval_table");
             var videos = {{ approval_needed|safe }};
             if (videos.length === 0) {
@@ -84,9 +82,7 @@
                     cell.appendChild(disapprove_button);
                 }
             }
-        });
 
-        $(document).ready(function() {
             $('form#approval').on("submit", function() {
                 var formData = new FormData(this);
                 var btn = $('button[clicked=true]');
@@ -108,17 +104,15 @@
                 $('button', $(this).parents('form')).removeAttr('clicked');
                 $(this).attr('clicked', 'true');
             });
-        });
 
-        $(function() {
-            var videos = {{ video_dict|safe }};
+            videos = {{ video_dict|safe }};
             var dates = {{ dates_of_interest|safe }};
             var prescriptions = {{ prescriptions|safe }};
 
-            var table = document.getElementById("video_table");
+            table = document.getElementById("video_table");
             var header = table.createTHead();
-            var row = header.insertRow(-1);
-            var cell = row.insertCell(-1);
+            row = header.insertRow(-1);
+            cell = row.insertCell(-1);
             cell.innerHTML = "Date";
             for (i=0; i < prescriptions.length; i++) {
                 cell = row.insertCell(-1);
@@ -135,7 +129,7 @@
                     for (k=0; k < times.length; k++) {
                         var real_time = times[k].substring(0, times[k].length - 3);
                         if (checkNested(videos, date, prescriptions[j][1], real_time)) {
-                            var node = document.createElement("A");
+                            node = document.createElement("A");
                             node.innerHTML = real_time;
                             node.href = videos[date][prescriptions[j][1]][real_time];
                             cell.appendChild(node);
@@ -147,6 +141,22 @@
                     }
                 }
             }
+
+            $('form#removal').submit(function() {
+                var formData = new FormData(this);
+                formData.append('action', 'remove');
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'recorder:patient_details' patient.id %}",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        window.location.href = '/recorder/doctor';
+                    }
+                });
+                return false;
+            });
         });
 
         function checkNested(obj) {
@@ -160,21 +170,5 @@
             }
             return true;
         }
-
-        $('form#removal').submit(function() {
-            var formData = new FormData(this);
-            formData.append('action', 'remove');
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'recorder:patient_details' patient.id %}",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function() {
-                    window.location.href = '/recorder/doctor';
-                }
-            });
-            return false;
-        });
     </script>
 {% endblock extra-js %}
