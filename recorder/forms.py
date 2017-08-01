@@ -40,7 +40,6 @@ class PrescriptionForm(forms.ModelForm):
 
 
 class PatientAccountForm(UserCreationForm):
-    # TODO: Make the first name the primary field.
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=256)
@@ -58,6 +57,10 @@ class PatientAccountForm(UserCreationForm):
         'password1',
         'password2',
     ]
+
+    def __init__(self, *args, **kwargs):
+        super(PatientAccountForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].widget.attrs.update({'autofocus': 'autofocus'})
 
     def clean(self):
         cleaned_data = super(PatientAccountForm, self).clean()
