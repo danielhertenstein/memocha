@@ -1,4 +1,3 @@
 Only the doctor of a patient should have privileges to see that patient's page
-Birthdays aren't allowed to be in the past
 Clean up javascript
 Organize static directory
