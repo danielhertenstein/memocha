@@ -179,6 +179,10 @@ def add_patient(request):
 @login_required
 def patient_details(request, patient_id):
     patient = get_object_or_404(Patient, pk=patient_id)
+    # If the doctor tries to access the patient page of not
+    # their patient, redirect to the doctor's dashboard
+    if not request.user.doctor.patient_set.filter(pk=patient.pk):
+        return redirect('/recorder/doctor')
     approval_videos = patient.videos_to_be_approved()
     approval_needed = [video.corresponding_dosage() for video in approval_videos]
     if request.method == 'POST':
