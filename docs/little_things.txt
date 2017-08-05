@@ -1,3 +1,4 @@
-Only the doctor of a patient should have privileges to see that patient's page
+Fix all site page titles
+The home button should take the user to the appropriate dashboard
 Clean up javascript
 Organize static directory

@@ -2,3 +2,34 @@ body {
     padding-top: 90px;
     padding-bottom: 15px;
 }
+
+.navbar, .navbar-default, .navbar-fixed-top {
+    background-image: none;
+    background-color: #1aaed7;
+}
+
+.navbar-default .navbar-nav>li>a {
+    color: white;
+}
+
+.navbar-default .navbar-brand {
+    color: white;
+}
+
+.navbar, .navbar-toggle {
+    border: 0;
+}
+
+.navbar-default .navbar-toggle:hover,
+.navbar-default .navbar-toggle:focus {
+    background-color: transparent;
+}
+
+.navbar-collapse {
+    border-top: none;
+    box-shadow: none;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: white;
+}

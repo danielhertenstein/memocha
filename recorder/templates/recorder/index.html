@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Recorder Landing Page{%  endblock title %}
+{% block title %}memocha Directly Observed Therapy{%  endblock title %}
 
 {% block extra-head %}
     {% load static %}
@@ -10,16 +10,16 @@
 {% block content %}
     <div class="col-md-3 col-md-offset-3">
         <h2 class="text-center">Doctor Login</h2>
-        <button class="btn btn-block" onclick="location.href='{% url 'recorder:doctor_dashboard' %}'">
+        <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:doctor_dashboard' %}'">
             Login with Existing Account</button>
-        <button class="btn btn-block" onclick="location.href='{% url 'recorder:doctor_creation' %}'">
+        <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:doctor_creation' %}'">
             Create New Doctor Account</button>
     </div>
     <div class="col-md-3">
         <h2 class="text-center">Patient Login</h2>
-        <button class="btn btn-block" onclick="location.href='{% url 'recorder:patient_dashboard' %}'">
+        <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:patient_dashboard' %}'">
             Login with Existing Account</button>
-        <button class="btn btn-block" onclick="location.href='{% url 'recorder:patient_creation' %}'">
+        <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:patient_creation' %}'">
             Create New Patient Account</button>
     </div>
 {% endblock content %}
