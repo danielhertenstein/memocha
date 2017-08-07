@@ -21,10 +21,4 @@
     {% load static %}
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
     <script type="text/javascript" src="{% static 'recorder/video.js' %}"></script>
-    <script type="text/javascript">
-        $(function() {
-            var home_link = document.getElementById('home-link');
-            home_link.href = '/recorder/patient';
-        })
-    </script>
 {% endblock extra-js %}

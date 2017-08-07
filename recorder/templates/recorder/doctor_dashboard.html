@@ -17,12 +17,3 @@
     <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:add_patient' %}'">
         Add new patient</button>
 {% endblock content %}
-
-{% block extra-js %}
-    <script type="text/javascript">
-        $(function() {
-            var home_link = document.getElementById('home-link');
-            home_link.href = '/recorder/doctor';
-        })
-    </script>
-{% endblock %}

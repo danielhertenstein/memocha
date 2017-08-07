@@ -22,6 +22,14 @@ def index(request):
 
 
 @login_required
+def dashboard(request):
+    if request.user.groups.filter(name='Patients').exists():
+        return redirect('/recorder/patient')
+    else:
+        return redirect('/recorder/doctor')
+
+
+@login_required
 def patient_dashboard(request):
     if not request.user.groups.filter(name='Patients').exists():
         return redirect('/accounts/login?next={0}'.format(request.path))

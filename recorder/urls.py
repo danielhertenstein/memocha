@@ -6,6 +6,7 @@ from . import views
 app_name = 'recorder'
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^dashboard/$', views.dashboard, name='dashboard'),
     url(r'^patient/$', views.patient_dashboard, name='patient_dashboard'),
     url(r'^patient/record', views.record_video, name='record_video'),
     url(r'^doctor/$', views.doctor_dashboard, name='doctor_dashboard'),
