@@ -153,6 +153,8 @@
                 new_node.href = video['url'];
                 if (video['approved'] === true) {
                     new_node.classList.add('yes-video');
+                } else if (video['approved'] === false) {
+                    new_node.classList.add('no-video');
                 } else {
                     new_node.classList.add('maybe-video');
                 }
