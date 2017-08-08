@@ -1,0 +1,22 @@
+.btn-primary{
+    background-image: none;
+    background-color: #1aaed7;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #1cb8e3;
+}
+
+.btn-primary:focus {
+    background-color: #1aaed7;
+}
+
+.btn-primary:hover:focus {
+    background-color: #1cb8e3;
+}
+
+.btn {
+    display: inline-block;
+}

@@ -1,17 +1,24 @@
 {% extends 'base.html' %}
 
-{% block title %}Record Video{%  endblock title %}
+{% block title %}memocha Video Recording{%  endblock title %}
+
+{% block extra-head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'recorder/record_video.css' %}" />
+{% endblock extra-head %}
 
 {% block content %}
     <video id="recordVideo" autoplay></video>
     <video id="playVideo" autoplay loop></video>
 
     <div>
-        <button id="record" disabled>Start Recording</button>
         <form id="video_upload" method="post" action="">
             {% csrf_token %}
             {{ form.medication.as_hidden }}
-            <button id="upload" disabled>Upload</button>
+            <div>
+                <button type="button" class="btn btn-primary" id="record" disabled>Start Recording</button>
+                <button class="btn btn-primary" id="upload" disabled>Upload</button>
+            </div>
         </form>
     </div>
 
