@@ -53,7 +53,11 @@ class Patient(models.Model):
                     dosage_datetime = datetime.combine(now.date(), dosage_time)
                     start_time = dosage_datetime - timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
                     end_time = dosage_datetime + timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
-                    if already_recorded.filter(record_date__range=(start_time, end_time)):
+                    if already_recorded.filter(
+                        record_date__range=(start_time, end_time)
+                    ).filter(
+                        prescription=prescription
+                    ):
                         continue
                     medications.append(prescription.medication)
                     times.append(dosage_time)
