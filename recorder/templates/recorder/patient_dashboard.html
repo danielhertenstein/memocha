@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard{%  endblock title %}
+{% block title %}memocha Patient Dashboard{%  endblock title %}
+
+{% block extra-head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'recorder/patient_dashboard.css' %}" />
+{% endblock extra-head %}
 
 {% block content %}
     <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
@@ -12,7 +17,7 @@
         <p>{{ prescription }}</p>
     {% endfor %}
 
-    <h2>Videos</h2>
+    <h2>Videos for Last 5 Days</h2>
     <div class="table-responsive">
         <table id="video_table" class="table">
         </table>
@@ -56,10 +61,7 @@
                     med_div.appendChild(node);
                 }
             }
-        });
 
-        $(function() {
-            var videos = {{ video_dict|safe }};
             var dates = {{ dates_of_interest|safe }};
 
             var table = document.getElementById("video_table");
@@ -81,31 +83,34 @@
                     var times = prescription[3];
                     for (k=0; k < times.length; k++) {
                         var real_time = times[k].substring(0, times[k].length - 3);
-                        if (checkNested(videos, header_cells[j], prescription[1], real_time)) {
-                            var node = document.createElement("A");
-                            node.innerHTML = real_time;
-                            node.href = videos[header_cells[j]][prescription[1]][real_time];
-                            cell.appendChild(node);
-                        } else {
-                            node = document.createElement("P");
-                            node.innerHTML = real_time;
-                            cell.appendChild(node);
-                        }
+                        node = document.createElement("P");
+                        node.innerHTML = real_time;
+                        node.classList.add('no-video');
+                        cell.appendChild(node);
                     }
                 }
             }
-        });
 
-        function checkNested(obj) {
-            var args = Array.prototype.slice.call(arguments, 1);
-
-            for (var i=0; i < args.length; i++) {
-                if (!obj || !obj.hasOwnProperty(args[i])) {
-                    return false;
+            var videos = {{ video_list|safe }};
+            table = $("#video_table");
+            for (i=0; i < videos.length; i++) {
+                var video = videos[i];
+                row = table.find("tr:contains("+ video.medication +")")[0];
+                column = table.find("td:contains("+ video.date +")").index();
+                cell = row.cells[column];
+                node = $(cell).find("p:contains("+ video.timeslot +")");
+                new_node = document.createElement("A");
+                new_node.innerHTML = video.timeslot;
+                new_node.href = video.url;
+                if (video.approved === true) {
+                    new_node.classList.add('yes-video');
+                } else if (video.approved === false) {
+                    new_node.classList.add('no-video');
+                } else {
+                    new_node.classList.add('maybe-video');
                 }
-                obj = obj[args[i]];
+                $(node).replaceWith(new_node);
             }
-            return true;
-        }
+        });
     </script>
 {% endblock extra-js %}

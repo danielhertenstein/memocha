@@ -1,9 +1,7 @@
 import json
 from datetime import datetime, timedelta
-from collections import defaultdict
-from functools import partial
 
-from django.db.models import Count, Func, F
+from django.db.models import Count
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
@@ -41,14 +39,16 @@ def patient_dashboard(request):
     next_meds, next_med_time = patient.next_medication()
     next_med_time = next_med_time.strftime('%H:%M')
 
-    video_dict = defaultdict(partial(defaultdict, partial(defaultdict, dict)))
-    dates_of_interest = [(datetime.today() - timedelta(days=i)).date() for i in [4, 3, 2, 1, 0]]
-    for date in dates_of_interest:
-        videos = patient.videos_for_date(date)
-        for video in videos:
-            dosage_details = video.corresponding_dosage()
-            video_dict[dosage_details['date']][dosage_details['medication']][dosage_details['timeslot']] = dosage_details['url']
-    video_dict_json = json.dumps(video_dict)
+    dates_of_interest = [datetime.today() - timedelta(days=i)
+                         for i in [4, 3, 2, 1, 0]]
+
+    video_list = []
+    videos = patient.video_set.filter(record_date__range=(
+        dates_of_interest[0].date(), dates_of_interest[-1]
+    ))
+    for video in videos:
+        video_list.append(video.corresponding_dosage())
+    video_list_json = json.dumps(video_list)
 
     prescriptions = list(patient.prescriptions.all().values_list())
     prescriptions_json = json.dumps(prescriptions, cls=DjangoJSONEncoder)
@@ -63,7 +63,7 @@ def patient_dashboard(request):
             'recordable_med_times': recordable_med_times,
             'dates_of_interest': [date.strftime('%d %b') for date in dates_of_interest],
             'prescriptions': prescriptions_json,
-            'video_dict': video_dict_json,
+            'video_list': video_list_json,
         }
     )
 
@@ -193,6 +193,7 @@ def patient_details(request, patient_id):
         return redirect('/recorder/doctor')
     approval_videos = patient.videos_to_be_approved()
     approval_needed = [video.corresponding_dosage() for video in approval_videos]
+    approval_needed_json = json.dumps(approval_needed, cls=DjangoJSONEncoder)
     if request.method == 'POST':
         # Remove the patient
         if request.POST.get('action', ) == 'remove':
@@ -260,7 +261,7 @@ def patient_details(request, patient_id):
                       'dates_of_interest': [date.strftime('%d %b') for date in dates_of_interest],
                       'video_list': video_list_json,
                       'prescriptions': prescriptions_json,
-                      'approval_needed': approval_needed,
+                      'approval_needed': approval_needed_json,
                   })
 
 

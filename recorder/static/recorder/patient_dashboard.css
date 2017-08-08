@@ -1,0 +1,16 @@
+.no-video {
+    color: red;
+}
+
+.yes-video {
+    color: green;
+}
+
+.maybe-video {
+    color: yellow;
+}
+
+#video_table a {
+    display: block;
+    margin-bottom: 10px;
+}

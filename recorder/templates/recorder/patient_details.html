@@ -144,16 +144,16 @@
             table = $("#video_table");
             for (i=0; i < videos.length; i++) {
                 var video = videos[i];
-                row = table.find("tr:contains("+ video['date'] +")")[0];
-                column = table.find("td:contains("+ video['medication'] +")").index();
+                row = table.find("tr:contains("+ video.date +")")[0];
+                column = table.find("td:contains("+ video.medication +")").index();
                 cell = row.cells[column];
-                node = $(cell).find("p:contains("+ video['timeslot'] +")");
+                node = $(cell).find("p:contains("+ video.timeslot +")");
                 new_node = document.createElement("A");
-                new_node.innerHTML = video['timeslot'];
-                new_node.href = video['url'];
-                if (video['approved'] === true) {
+                new_node.innerHTML = video.timeslot;
+                new_node.href = video.url;
+                if (video.approved === true) {
                     new_node.classList.add('yes-video');
-                } else if (video['approved'] === false) {
+                } else if (video.approved === false) {
                     new_node.classList.add('no-video');
                 } else {
                     new_node.classList.add('maybe-video');
