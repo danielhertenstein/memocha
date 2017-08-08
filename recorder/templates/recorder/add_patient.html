@@ -1,5 +1,14 @@
 {% extends 'base.html' %}
 
+{% load bootstrap %}
+
+{% block title %}memocha New Patient{%  endblock title %}
+
+{% block extra-head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'recorder/add_patient.css' %}" />
+{% endblock extra-head %}
+
 {% block content %}
     <h2>Add a new patient</h2>
     <div class="entry">
