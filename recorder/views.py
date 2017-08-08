@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from collections import defaultdict
 from functools import partial
 
-from django.db.models import Count
+from django.db.models import Count, Func, F
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password
@@ -244,15 +244,13 @@ def patient_details(request, patient_id):
         formset = modelformset_factory(Prescription, fields='__all__', extra=0)(prefix='p_form', queryset=patient.prescriptions.all())
     else:
         formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form')
-    video_dict = defaultdict(partial(defaultdict, partial(defaultdict, dict)))
     dates_of_interest = [(patient.user.date_joined + timedelta(days=i)).date()
                          for i in range(int((timezone.now() - patient.user.date_joined).days)+1)]
-    for date in dates_of_interest:
-        videos = patient.videos_for_date(date)
-        for video in videos:
-            dosage_details = video.corresponding_dosage()
-            video_dict[dosage_details['date']][dosage_details['medication']][dosage_details['timeslot']] = dosage_details['url']
-    video_dict_json = json.dumps(video_dict)
+    video_list = []
+    videos = patient.video_set.all()
+    for video in videos:
+        video_list.append(video.corresponding_dosage())
+    video_list_json = json.dumps(video_list)
     prescriptions = list(patient.prescriptions.all().values_list())
     prescriptions_json = json.dumps(prescriptions, cls=DjangoJSONEncoder)
     return render(request, 'recorder/patient_details.html',
@@ -260,7 +258,7 @@ def patient_details(request, patient_id):
                       'patient': patient,
                       'formset': formset,
                       'dates_of_interest': [date.strftime('%d %b') for date in dates_of_interest],
-                      'video_dict': video_dict_json,
+                      'video_list': video_list_json,
                       'prescriptions': prescriptions_json,
                       'approval_needed': approval_needed,
                   })

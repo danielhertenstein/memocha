@@ -1,0 +1,38 @@
+.btn-primary{
+    background-image: none;
+    background-color: #1aaed7;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #1cb8e3;
+}
+
+#remove_patient {
+    background-image: none;
+    background-color: black;
+    color: white;
+    border: none;
+}
+
+#remove_patient:hover {
+    background-color: #3b3b3b;
+}
+
+.no-video {
+    color: red;
+}
+
+.yes-video {
+    color: green;
+}
+
+.maybe-video {
+    color: yellow;
+}
+
+#video_table a {
+    display: block;
+    margin-bottom: 10px;
+}

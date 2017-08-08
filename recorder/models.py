@@ -113,7 +113,8 @@ class Video(models.Model):
             'medication': self.prescription.medication,
             'date': self.record_date.date().strftime('%d %b'),
             'timeslot': timeslot.strftime('%H:%M'),
-            'url': self.upload.url
+            'url': self.upload.url,
+            'approved': self.approved,
         }
 
     def __str__(self):
