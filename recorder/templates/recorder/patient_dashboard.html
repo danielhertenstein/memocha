@@ -8,6 +8,12 @@
 {% endblock extra-head %}
 
 {% block content %}
+    <h2>Personal Information for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
+    <p>Date of birth: {{ patient.date_of_birth }}</p>
+    <p>Email Address: {{ patient.user.email }}</p>
+    <p>Doctor: {{ patient.doctor.user.first_name }} {{ patient.doctor.user.last_name }}</p>
+
+
     <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
         {% csrf_token %}
     </form>
@@ -45,6 +51,7 @@
                     node.innerHTML = "Record Medication";
                     node.setAttribute('name', 'medication');
                     node.setAttribute('value', medications[i]);
+                    node.classList.add('btn', 'btn-primary');
                     med_div.appendChild(node);
                 }
             } else {
