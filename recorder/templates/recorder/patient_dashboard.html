@@ -13,7 +13,6 @@
     <p>Email Address: {{ patient.user.email }}</p>
     <p>Doctor: {{ patient.doctor.user.first_name }} {{ patient.doctor.user.last_name }}</p>
 
-
     <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
         {% csrf_token %}
     </form>
