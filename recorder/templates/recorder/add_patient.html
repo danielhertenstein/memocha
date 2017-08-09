@@ -11,21 +11,22 @@
 
 {% block content %}
     <h2>Add a new patient</h2>
-    <div class="entry">
-        <form method="post">
-            {% csrf_token %}
-            {{ formset.management_form }}
-            {{ form.as_p }}
-            <h3>Prescriptions</h3>
+    <form method="post">
+        {% csrf_token %}
+        <div id="patient-info">
+            {{ form|bootstrap_horizontal }}
+        </div>
+        <h3>Prescriptions</h3>
+        <div id="prescriptions">
             {% for sub_form in formset %}
-                <div id="{{ sub_form.prefix }}-row">
-                    {{ sub_form.as_table }}
+                <div class="prescription-form" id="{{ sub_form.prefix }}-row">
+                    {{ sub_form|bootstrap_horizontal }}
                 </div>
             {% endfor %}
-            <br />
-            <button class="btn btn-primary" type="submit" name="action" value="save">Save Patient</button>
-        </form>
-    </div>
+        </div>
+        {{ formset.management_form }}
+        <button id="save-patient" class="btn btn-lg btn-primary" name="action" value="save">Save Patient</button>
+    </form>
 {% endblock content %}
 
 {% block extra-js %}
@@ -33,10 +34,10 @@
     <script type="text/javascript" src="{% static 'recorder/jquery.formset.js' %}"></script>
     <script type="text/javascript">
         $(function() {
-            $('form div').formset({
+            $('form div#prescriptions div.prescription-form').formset({
                 prefix: 'p_form',
                 addText: 'Add Prescription',
-                deleteText: 'remove'
+                deleteText: 'Remove Prescription'
             })
         });
     </script>
