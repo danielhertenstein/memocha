@@ -22,15 +22,12 @@
 }
 
 .no-video {
-    color: red;
 }
 
 .yes-video {
-    color: green;
 }
 
 .maybe-video {
-    color: yellow;
 }
 
 #video_table a {

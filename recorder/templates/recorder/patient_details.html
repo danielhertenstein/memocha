@@ -137,7 +137,7 @@
                         var real_time = times[k].substring(0, times[k].length - 3);
                         node = document.createElement("P");
                         node.innerHTML = real_time;
-                        node.classList.add('no-video');
+                        node.classList.add('text-danger');
                         cell.appendChild(node);
                     }
                 }
@@ -155,11 +155,11 @@
                 new_node.innerHTML = video.timeslot;
                 new_node.href = video.url;
                 if (video.approved === true) {
-                    new_node.classList.add('yes-video');
+                    new_node.classList.add('yes-video', 'text-success', 'bg-success');
                 } else if (video.approved === false) {
-                    new_node.classList.add('no-video');
+                    new_node.classList.add('no-video', 'text-danger', 'bg-danger');
                 } else {
-                    new_node.classList.add('maybe-video');
+                    new_node.classList.add('maybe-video', 'text-info', 'bg-info');
                 }
                 $(node).replaceWith(new_node);
             }
