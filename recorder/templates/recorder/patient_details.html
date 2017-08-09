@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% load bootstrap %}
+
 {% block title %}memocha Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}{%  endblock title %}
 
 {% block extra-head %}
@@ -12,26 +14,25 @@
     <p>Date of birth: {{ patient.date_of_birth }}</p>
     <p>Email Address: {{ patient.user.email }}</p>
 
-    <h3>Prescriptions</h3>
-    <form id="prescriptions" method="post">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        {% for form in formset %}
-            <div id="{{ form.prefix }}-row">
-                {{ form.as_table }}
-            </div>
-        {% endfor %}
-        <br />
-        <button class="btn btn-primary">Update Patient</button>
-    </form>
-
-    <h3>Awaiting Approval</h3>
+    <h3>Videos Awaiting Approval</h3>
     <form id="approval" method="post">
         {% csrf_token %}
         <div class="table-responsive">
             <table id="approval_table" class="table">
             </table>
         </div>
+    </form>
+
+    <h3>Prescriptions</h3>
+    <form id="prescriptions" method="post">
+        {% csrf_token %}
+        {% for form in formset %}
+            <div class="prescription-form" id="{{ form.prefix }}-row">
+                {{ form|bootstrap_horizontal }}
+            </div>
+        {% endfor %}
+        {{ formset.management_form }}
+        <button class="btn btn-lg btn-primary" id="save-patient">Update Patient</button>
     </form>
 
     <h3>Video History</h3>
@@ -42,7 +43,7 @@
 
     <form id="removal" method="post">
         {% csrf_token %}
-        <button class="btn btn-primary" id="remove_patient">Remove Patient</button>
+        <button class="btn btn-lg btn-primary" id="remove-patient">Remove Patient</button>
     </form>
 {% endblock content %}
 
@@ -51,10 +52,10 @@
     <script type="text/javascript" src="{% static 'recorder/jquery.formset.js' %}"></script>
     <script type="text/javascript">
         $(function() {
-            $('form#prescriptions div').formset({
+            $('form#prescriptions div.prescription-form').formset({
                 prefix: 'p_form',
                 addText: 'Add Prescription',
-                deleteText: 'remove'
+                deleteText: 'Remove Prescription'
             });
 
             var table = document.getElementById("approval_table");
@@ -75,15 +76,17 @@
                     cell.appendChild(link);
                     cell = row.insertCell(-1);
                     var approve_button = document.createElement("BUTTON");
-                    approve_button.innerHTML = "Approve";
+                    approve_button.innerHTML = "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true'></span>";
                     approve_button.name = 'approve';
                     approve_button.value = i;
+                    approve_button.classList.add("approve");
                     cell.appendChild(approve_button);
                     cell = row.insertCell(-1);
                     var disapprove_button = document.createElement("BUTTON");
-                    disapprove_button.innerHTML = "Disapprove";
+                    disapprove_button.innerHTML = "<span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span>";
                     disapprove_button.name = 'disapprove';
                     disapprove_button.value = i;
+                    disapprove_button.classList.add("disapprove");
                     cell.appendChild(disapprove_button);
                 }
             }
