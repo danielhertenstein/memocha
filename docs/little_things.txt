@@ -1,4 +1,4 @@
-Fix all site page titles
 Fix the dosage field to be text
+Refactor common html and css
 Clean up javascript
 Organize static directory
