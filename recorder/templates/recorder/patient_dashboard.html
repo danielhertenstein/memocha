@@ -8,24 +8,34 @@
 {% endblock extra-head %}
 
 {% block content %}
-    <h2>Personal Information for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
-    <p>Date of birth: {{ patient.date_of_birth }}</p>
-    <p>Email Address: {{ patient.user.email }}</p>
-    <p>Doctor: {{ patient.doctor.user.first_name }} {{ patient.doctor.user.last_name }}</p>
+    <div class="row">
+        <h2>Personal Information for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
+        <p>Date of birth: {{ patient.date_of_birth }}</p>
+        <p>Email Address: {{ patient.user.email }}</p>
+        <p>Doctor: {{ patient.doctor.user.first_name }} {{ patient.doctor.user.last_name }}</p>
+    </div>
 
-    <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
-        {% csrf_token %}
-    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
+                {% csrf_token %}
+            </form>
+        </div>
+    </div>
 
-    <h2>Prescriptions</h2>
-    {% for prescription in patient.prescriptions.all %}
-        <p>{{ prescription }}</p>
-    {% endfor %}
+    <div class="row">
+        <h2>Prescriptions</h2>
+        {% for prescription in patient.prescriptions.all %}
+            <p>{{ prescription }}</p>
+        {% endfor %}
+    </div>
 
-    <h2>Videos for Last 5 Days</h2>
-    <div class="table-responsive">
-        <table id="video_table" class="table">
-        </table>
+    <div class="row">
+        <h2>Videos for Last 5 Days</h2>
+        <div class="table-responsive">
+            <table id="video_table" class="table">
+            </table>
+        </div>
     </div>
 {% endblock content %}
 
@@ -41,17 +51,26 @@
                 node.innerHTML = "Recordable Medications";
                 med_div.appendChild(node);
                 for (i=0; i < medications.length; i++) {
-                    div = document.createElement("DIV");
-                    med_div.appendChild(div);
+                    row_div = document.createElement("DIV");
+                    row_div.classList.add("row");
+                    med_div.appendChild(row_div);
+
+                    col_div = document.createElement("DIV");
+                    col_div.classList.add("col-md-3");
                     node = document.createElement("P");
                     node.innerHTML = medications[i] + " at " + time[i];
-                    div.appendChild(node);
+                    col_div.appendChild(node);
+                    row_div.appendChild(col_div);
+
+                    col_div = document.createElement("DIV");
+                    col_div.classList.add("col-md-9");
                     node = document.createElement("button");
                     node.innerHTML = "Record Medication";
                     node.setAttribute('name', 'medication');
                     node.setAttribute('value', medications[i]);
                     node.classList.add('btn', 'btn-primary');
-                    div.appendChild(node);
+                    col_div.appendChild(node);
+                    row_div.appendChild(col_div);
                 }
             } else {
                 medications = {{ next_meds|safe }};
