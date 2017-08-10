@@ -6,7 +6,7 @@ from django.contrib.postgres.fields import ArrayField
 # The window of time on either side of the prescribed
 # time a patient can record a dosage video.
 # Units: seconds
-DOSAGE_TIME_WIGGLE_ROOM = 1800
+DOSAGE_TIME_WIGGLE_ROOM = 18000
 
 
 class Doctor(models.Model):
@@ -47,8 +47,8 @@ class Patient(models.Model):
         already_recorded = self.videos_for_date(now.date())
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
-                time_dif = (dosage_time.hour - now.hour) * 3600 + (dosage_time.second - now.second)
-                if abs(time_dif) <= DOSAGE_TIME_WIGGLE_ROOM:
+                time_dif = datetime.combine(now.date(), dosage_time) - now
+                if time_dif.seconds <= DOSAGE_TIME_WIGGLE_ROOM:
                     # Check to see if the video has already been recorded
                     dosage_datetime = datetime.combine(now.date(), dosage_time)
                     start_time = dosage_datetime - timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
@@ -64,14 +64,16 @@ class Patient(models.Model):
         return medications, times
 
     def next_medication(self):
-        from datetime import datetime, date, timedelta
+        from datetime import datetime, timedelta
         time_to_next_medication = timedelta(days=2)
         medications = []
         now = datetime.now()
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
-                time_dif = datetime.combine(date.today(), dosage_time) - now
-                if (time_dif.seconds > 0) and (time_dif <= time_to_next_medication):
+                time_dif = datetime.combine(now.date(), dosage_time) - now
+                if time_dif.total_seconds() < 0:
+                    continue
+                if time_dif <= time_to_next_medication:
                     if time_dif == time_to_next_medication:
                         medications.append(prescription.medication)
                     else:

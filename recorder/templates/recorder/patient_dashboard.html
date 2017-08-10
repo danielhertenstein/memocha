@@ -37,21 +37,21 @@
             if (recordables.length > 0) {
                 var medications = {{ recordable_meds|safe }};
                 var time = {{ recordable_med_times|safe }};
-                var heading = document.createTextNode("Recordable Medications");
                 var node = document.createElement("H2");
-                node.appendChild(heading);
+                node.innerHTML = "Recordable Medications";
                 med_div.appendChild(node);
                 for (i=0; i < medications.length; i++) {
+                    div = document.createElement("DIV");
+                    med_div.appendChild(div);
                     node = document.createElement("P");
-                    par = document.createTextNode(medications[i] + " at " + time[i]);
-                    node.appendChild(par);
-                    med_div.appendChild(node);
+                    node.innerHTML = medications[i] + " at " + time[i];
+                    div.appendChild(node);
                     node = document.createElement("button");
                     node.innerHTML = "Record Medication";
                     node.setAttribute('name', 'medication');
                     node.setAttribute('value', medications[i]);
                     node.classList.add('btn', 'btn-primary');
-                    med_div.appendChild(node);
+                    div.appendChild(node);
                 }
             } else {
                 medications = {{ next_meds|safe }};
