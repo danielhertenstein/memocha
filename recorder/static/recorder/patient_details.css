@@ -37,6 +37,14 @@
     padding-bottom: 6px;
 }
 
+#video_table tbody th {
+    padding-top: 11px;
+}
+
+.medication-header {
+    text-align: center;
+}
+
 .delete-row {
     margin-left: 15px;
     margin-right: 15px;

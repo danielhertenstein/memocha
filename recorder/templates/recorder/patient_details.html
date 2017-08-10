@@ -37,7 +37,7 @@
 
     <h3>Video History</h3>
     <div class="table-responsive">
-        <table id="video_table" class="table">
+        <table id="video_table" class="table table-condensed">
         </table>
     </div>
 
@@ -119,19 +119,22 @@
             table = document.getElementById("video_table");
             var header = table.createTHead();
             row = header.insertRow(-1);
-            cell = row.insertCell(-1);
+            cell = document.createElement("TH");
             cell.innerHTML = "Date";
+            row.appendChild(cell);
             for (i=0; i < prescriptions.length; i++) {
-                cell = row.insertCell(-1);
+                cell = document.createElement("TH");
                 cell.innerHTML = prescriptions[i][1];
+                cell.classList.add("medication-header");
+                row.appendChild(cell);
             }
+            var body = table.createTBody();
             for (i=dates.length-1; i >= 0; i--) {
                 var date = dates[i];
-                row = table.insertRow(-1);
-                cell = row.insertCell(-1);
-                node = document.createElement("P");
-                node.innerHTML = date;
-                cell.appendChild(node);
+                row = body.insertRow(-1);
+                cell = document.createElement("TH");
+                cell.innerHTML = date;
+                row.appendChild(cell);
                 for (j=0; j < prescriptions.length; j++) {
                     var times = prescriptions[j][3];
                     cell = row.insertCell(-1);
@@ -149,8 +152,10 @@
             table = $("#video_table");
             for (i=0; i < videos.length; i++) {
                 var video = videos[i];
-                row = table.find("tr:contains("+ video.date +")")[0];
-                column = table.find("td:contains("+ video.medication +")").index();
+                row = table.find("th:contains("+ video.date +")").parent()[0];
+                console.log(row);
+                column = table.find("th:contains("+ video.medication +")").index();
+                console.log(column);
                 cell = row.cells[column];
                 node = $(cell).find("p:contains("+ video.timeslot +")");
                 new_node = document.createElement("A");
