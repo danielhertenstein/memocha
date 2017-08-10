@@ -79,14 +79,14 @@
                     approve_button.innerHTML = "<span class='glyphicon glyphicon-thumbs-up' aria-hidden='true'></span>";
                     approve_button.name = 'approve';
                     approve_button.value = i;
-                    approve_button.classList.add("approve");
+                    approve_button.classList.add("btn", "btn-success");
                     cell.appendChild(approve_button);
                     cell = row.insertCell(-1);
                     var disapprove_button = document.createElement("BUTTON");
                     disapprove_button.innerHTML = "<span class='glyphicon glyphicon-thumbs-down' aria-hidden='true'></span>";
                     disapprove_button.name = 'disapprove';
                     disapprove_button.value = i;
-                    disapprove_button.classList.add("disapprove");
+                    disapprove_button.classList.add("btn", "btn-danger");
                     cell.appendChild(disapprove_button);
                 }
             }
@@ -129,7 +129,9 @@
                 var date = dates[i];
                 row = table.insertRow(-1);
                 cell = row.insertCell(-1);
-                cell.innerHTML = date;
+                node = document.createElement("P");
+                node.innerHTML = date;
+                cell.appendChild(node);
                 for (j=0; j < prescriptions.length; j++) {
                     var times = prescriptions[j][3];
                     cell = row.insertCell(-1);
@@ -152,14 +154,15 @@
                 cell = row.cells[column];
                 node = $(cell).find("p:contains("+ video.timeslot +")");
                 new_node = document.createElement("A");
+                new_node.role = "button";
                 new_node.innerHTML = video.timeslot;
                 new_node.href = video.url;
                 if (video.approved === true) {
-                    new_node.classList.add('yes-video', 'text-success', 'bg-success');
+                    new_node.classList.add('btn', 'btn-success');
                 } else if (video.approved === false) {
-                    new_node.classList.add('no-video', 'text-danger', 'bg-danger');
+                    new_node.classList.add('btn', 'btn-danger');
                 } else {
-                    new_node.classList.add('maybe-video', 'text-info', 'bg-info');
+                    new_node.classList.add('btn', 'btn-warning');
                 }
                 $(node).replaceWith(new_node);
             }
