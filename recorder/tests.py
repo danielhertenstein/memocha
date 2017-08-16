@@ -9,6 +9,7 @@ class VideoTestCase(TestCase):
         # Make the doctor and patient groups
         doctor_group = Group.objects.create(name='Doctors')
         patient_group = Group.objects.create(name='Patients')
+
         # Make a doctor
         doctor_user = User.objects.create_user(
             'Doctor',
@@ -16,7 +17,10 @@ class VideoTestCase(TestCase):
             'doctorpassword'
         )
         doctor_user.groups.add(doctor_group)
-        # TODO: Finish making doctor and change patient's doctor from the user.
+        doctor = Doctor.objects.create(
+            user=doctor_user
+        )
+
         # Make a patient
         patient_user = User.objects.create_user(
             'Patient',
@@ -26,9 +30,10 @@ class VideoTestCase(TestCase):
         patient_user.groups.add(patient_group)
         patient = Patient.objects.create(
             user=patient_user,
-            doctor=doctor_user,
+            doctor=doctor,
             date_of_birth=timezone.now().date(),
         )
+
         # Make a prescription
         prescription = Prescription.objects.create(
             medication='test',

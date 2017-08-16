@@ -4,4 +4,3 @@ Refactor common html and css
 Make a requirements file
 Write some example tests
 Clean up javascript
-Organize static directory
