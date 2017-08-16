@@ -8,12 +8,26 @@
 {% endblock extra-head %}
 
 {% block content %}
-    <h2>Patients</h2>
-    <div class="list-group">
-        {% for patient in patients %}
-            <a href="{% url 'recorder:patient_details' patient.id %}" class="list-group-item list-group-item-action">{{ patient }}</a>
-        {% endfor %}
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Patients</h2>
+        </div>
     </div>
-    <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:add_patient' %}'">
-        Add new patient</button>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="list-group">
+                {% for patient in patients %}
+                    <a href="{% url 'recorder:patient_details' patient.id %}" class="list-group-item list-group-item-action">{{ patient }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button class="btn btn-block btn-primary" onclick="location.href='{% url 'recorder:add_patient' %}'">
+                Add new patient</button>
+        </div>
+    </div>
 {% endblock content %}
