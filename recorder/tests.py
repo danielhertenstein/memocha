@@ -5,7 +5,7 @@ of the tests I would write for production code.
 from datetime import time
 from freezegun import freeze_time
 
-from django.test import TransactionTestCase
+from django.test import TransactionTestCase, Client
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -174,3 +174,19 @@ class PatientTestCase(TransactionTestCase):
             medications, times = patient.next_medication()
             self.assertEqual(medications, expected_name)
             self.assertEqual(times, expected_time)
+
+
+class HomeButtonTestCase(TransactionTestCase):
+    """Tests the behavior of the home button"""
+
+    def test_not_logged_in(self):
+        """Home button should take the vistor to the login screen."""
+        c = Client()
+        response = c.get('/recorder/dashboard')
+        print('boo')
+
+    def test_patient_pressed(self):
+        """The logged in patient should be taken to the patient dashboard."""
+
+    def test_doctor_pressed(self):
+        """The logged in doctor should be taken to the doctor dashboard."""
