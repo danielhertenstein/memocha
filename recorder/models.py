@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
@@ -40,7 +42,6 @@ class Patient(models.Model):
         return "{0} {1}".format(self.user.first_name, self.user.last_name)
 
     def recordable_medications(self):
-        from datetime import datetime, timedelta
         medications = []
         times = []
         now = datetime.now()
@@ -64,22 +65,40 @@ class Patient(models.Model):
         return medications, times
 
     def next_medication(self):
-        from datetime import datetime, timedelta
-        time_to_next_medication = timedelta(days=2)
+        time_to_next_medication = timedelta(microseconds=-1)
         medications = []
         now = datetime.now()
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
                 time_dif = datetime.combine(now.date(), dosage_time) - now
-                if time_dif.total_seconds() < 0:
-                    continue
-                if time_dif <= time_to_next_medication:
-                    if time_dif == time_to_next_medication:
-                        medications.append(prescription.medication)
-                    else:
+
+                if time_to_next_medication.total_seconds() < 0:
+                    # Haven't found a medication to take today yet
+                    if time_dif.total_seconds() >= 0:
+                        # Found a medication to take today
                         time_to_next_medication = time_dif
                         medications = [prescription.medication, ]
-                    break
+                        break
+                    else:
+                        # Larger negative time_dif's means earlier in the day
+                        if time_dif.total_seconds() <= time_to_next_medication.total_seconds():
+                            if time_dif.total_seconds() == time_to_next_medication.total_seconds():
+                                medications.append(prescription.medication)
+                            else:
+                                time_to_next_medication = time_dif
+                                medications = [prescription.medication, ]
+                else:
+                    # There is at least one medication yet to be taken today
+                    if time_dif.total_seconds() < 0:
+                        # Skip tomorrow's medications if we have one for today
+                        continue
+                    if time_dif.total_seconds() <= time_to_next_medication.total_seconds():
+                        if time_dif.total_seconds() == time_to_next_medication.total_seconds():
+                            medications.append(prescription.medication)
+                        else:
+                            time_to_next_medication = time_dif
+                            medications = [prescription.medication, ]
+                        break
         time_of_next_medication = (now + time_to_next_medication).time()
         return medications, time_of_next_medication
 

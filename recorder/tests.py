@@ -1,3 +1,10 @@
+"""
+In the interest of my own time, this is a subset
+of the tests I would write for production code.
+"""
+from datetime import time
+from freezegun import freeze_time
+
 from django.test import TransactionTestCase
 from django.utils import timezone
 from django.contrib.auth.models import User, Group
@@ -48,7 +55,7 @@ class VideoTestCase(TransactionTestCase):
         # Make a video
         self.my_file = SimpleUploadedFile('test.txt', b'test contents')
         video = Video.objects.create(
-            person=Patient.objects.get(user__username='Patient'),
+            person=patient,
             record_date=current_datetime,
             prescription=prescription,
             upload=self.my_file,
@@ -58,6 +65,9 @@ class VideoTestCase(TransactionTestCase):
         Video.objects.get(pk=1).upload.delete()
 
     def test_date_and_time_details(self):
+        """
+        Tests that the right timeslot is returned for a test video.
+        """
         prescription = Prescription.objects.get(medication='test')
         current_datetime = timezone.now()
 
@@ -72,3 +82,95 @@ class VideoTestCase(TransactionTestCase):
         self.assertEqual(dosage['timeslot'], expected_time)
         self.assertEqual(dosage['url'], '/media/videos/test.txt')
         self.assertEqual(dosage['approved'], None)
+
+
+class PatientTestCase(TransactionTestCase):
+    def setUp(self):
+        current_datetime = timezone.now()
+
+        # Make the doctor and patient groups
+        doctor_group = Group.objects.create(name='Doctors')
+        patient_group = Group.objects.create(name='Patients')
+
+        # Make a doctor
+        doctor_user = User.objects.create_user(
+            'Doctor',
+            'doctor@example.com',
+            'doctorpassword'
+        )
+        doctor_user.groups.add(doctor_group)
+        doctor = Doctor.objects.create(
+            user=doctor_user
+        )
+
+        # Make a patient
+        patient_user = User.objects.create_user(
+            'Patient',
+            'patient@example.com',
+            'patientpassword'
+        )
+        patient_user.groups.add(patient_group)
+        patient = Patient.objects.create(
+            user=patient_user,
+            doctor=doctor,
+            date_of_birth=current_datetime.date(),
+        )
+
+        # Make two prescriptions
+        prescription1 = Prescription.objects.create(
+            medication='test',
+            dosage=1,
+            dosage_times=[
+                time(hour=9),
+                time(hour=12),
+                time(hour=22),
+            ]
+        )
+        prescription2 = Prescription.objects.create(
+            medication='other_test',
+            dosage=1,
+            dosage_times=[
+                time(hour=6),
+                time(hour=11),
+                time(hour=21),
+            ]
+        )
+        patient.prescriptions.add(prescription1)
+        patient.prescriptions.add(prescription2)
+
+
+    def test_next_medication_at_end_of_day(self):
+        """
+        Tests the first medication of the day is returned when the method is
+        called at the end of the day.
+        """
+        patient = Patient.objects.get(user__username='Patient')
+
+        expected_prescription = Prescription.objects.get(medication='other_test')
+        expected_name = [expected_prescription.medication, ]
+        expected_time = expected_prescription.dosage_times[0]
+
+        current_time = timezone.now()
+        current_time = current_time.replace(hour=23, minute=0, second=0, microsecond=0)
+        with freeze_time(current_time):
+            medications, times = patient.next_medication()
+            self.assertEqual(medications, expected_name)
+            self.assertEqual(times, expected_time)
+
+    def test_next_medication_in_middle_of_day(self):
+        """
+        Tests the first medication of the day is returned when the method is
+        called in the middle of the day.
+        """
+        patient = Patient.objects.get(user__username='Patient')
+
+        expected_prescription = Prescription.objects.get(medication='test')
+        expected_name = [expected_prescription.medication, ]
+        expected_time = expected_prescription.dosage_times[1]
+
+        current_time = timezone.now()
+        current_time = current_time.replace(hour=11, minute=30, second=0, microsecond=0)
+        with freeze_time(current_time):
+            medications, times = patient.next_medication()
+            self.assertEqual(medications, expected_name)
+            self.assertEqual(times, expected_time)
