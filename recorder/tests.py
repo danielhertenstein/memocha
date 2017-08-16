@@ -179,14 +179,62 @@ class PatientTestCase(TransactionTestCase):
 class HomeButtonTestCase(TransactionTestCase):
     """Tests the behavior of the home button"""
 
+    def setUp(self):
+        self.client = Client()
+
+        # Make the doctor and patient groups
+        doctor_group = Group.objects.create(name='Doctors')
+        patient_group = Group.objects.create(name='Patients')
+
+        # Make a doctor user
+        doctor_user = User.objects.create_user(
+            'Doctor',
+            'doctor@example.com',
+            'doctorpassword'
+        )
+        doctor_user.groups.add(doctor_group)
+        doctor = Doctor.objects.create(
+            user=doctor_user
+        )
+
+        # Make a patient user
+        patient_user = User.objects.create_user(
+            'Patient',
+            'patient@example.com',
+            'patientpassword'
+        )
+        patient_user.groups.add(patient_group)
+        patient = Patient.objects.create(
+            user=patient_user,
+            doctor=doctor,
+            date_of_birth=timezone.now().date(),
+        )
+
     def test_not_logged_in(self):
         """Home button should take the vistor to the login screen."""
-        c = Client()
-        response = c.get('/recorder/dashboard')
+        response = self.client.get('/recorder/dashboard', follow=True)
+        # TODO: Check the redirect goes to the right place.
+        # TODO: Check the status code?
+        # TODO: Check the correct template has been loaded.
+        #self.assertRedirects()
         print('boo')
 
     def test_patient_pressed(self):
         """The logged in patient should be taken to the patient dashboard."""
+        self.client.login(username='Patient', password='patientpassword')
+        response = self.client.get('/recorder/dashboard', follow=True)
+        # TODO: Check the redirect goes to the right place.
+        # TODO: Check the status code?
+        # TODO: Check the correct template has been loaded.
+        #self.assertRedirects()
+        print('boo')
 
     def test_doctor_pressed(self):
         """The logged in doctor should be taken to the doctor dashboard."""
+        self.client.login(username='Doctor', password='doctorpassword')
+        response = self.client.get('/recorder/dashboard', follow=True)
+        # TODO: Check the redirect goes to the right place.
+        # TODO: Check the status code?
+        # TODO: Check the correct template has been loaded.
+        #self.assertRedirects()
+        print('boo')
