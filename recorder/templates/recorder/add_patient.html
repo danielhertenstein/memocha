@@ -10,23 +10,33 @@
 {% endblock extra-head %}
 
 {% block content %}
-    <h2>Add a new patient</h2>
-    <form method="post">
-        {% csrf_token %}
-        <div id="patient-info">
-            {{ form|bootstrap_horizontal }}
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Add a new patient</h2>
         </div>
-        <h3>Prescriptions</h3>
-        <div id="prescriptions">
-            {% for sub_form in formset %}
-                <div class="prescription-form" id="{{ sub_form.prefix }}-row">
-                    {{ sub_form|bootstrap_horizontal }}
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <form class="form-horizontal" method="post">
+                {% csrf_token %}
+                <h3>Patient Information</h3>
+                <div id="patient-info">
+                    {{ form|bootstrap_horizontal }}
                 </div>
-            {% endfor %}
+                <h3>Prescriptions</h3>
+                <div id="prescriptions">
+                    {% for sub_form in formset %}
+                        <div class="prescription-form" id="{{ sub_form.prefix }}-row">
+                            {{ sub_form|bootstrap_horizontal }}
+                        </div>
+                    {% endfor %}
+                </div>
+                {{ formset.management_form }}
+                <button id="save-patient" class="btn btn-lg btn-primary" name="action" value="save">Save Patient</button>
+            </form>
         </div>
-        {{ formset.management_form }}
-        <button id="save-patient" class="btn btn-lg btn-primary" name="action" value="save">Save Patient</button>
-    </form>
+    </div>
 {% endblock content %}
 
 {% block extra-js %}

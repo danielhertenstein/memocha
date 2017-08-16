@@ -10,41 +10,61 @@
 {% endblock extra-head %}
 
 {% block content %}
-    <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
-    <p>Date of birth: {{ patient.date_of_birth }}</p>
-    <p>Email Address: {{ patient.user.email }}</p>
-
-    <h3>Videos Awaiting Approval</h3>
-    <form id="approval" method="post">
-        {% csrf_token %}
-        <div class="table-responsive">
-            <table id="approval_table" class="table">
-            </table>
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Patient Details for {{ patient.user.first_name }} {{ patient.user.last_name }}</h2>
+            <p>Date of birth: {{ patient.date_of_birth }}</p>
+            <p>Email Address: {{ patient.user.email }}</p>
         </div>
-    </form>
-
-    <h3>Prescriptions</h3>
-    <form id="prescriptions" method="post">
-        {% csrf_token %}
-        {% for form in formset %}
-            <div class="prescription-form" id="{{ form.prefix }}-row">
-                {{ form|bootstrap_horizontal }}
-            </div>
-        {% endfor %}
-        {{ formset.management_form }}
-        <button class="btn btn-lg btn-primary" id="save-patient">Update Patient</button>
-    </form>
-
-    <h3>Video History</h3>
-    <div class="table-responsive">
-        <table id="video_table" class="table table-condensed">
-        </table>
     </div>
 
-    <form id="removal" method="post">
-        {% csrf_token %}
-        <button class="btn btn-lg btn-primary" id="remove-patient">Remove Patient</button>
-    </form>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Videos Awaiting Approval</h3>
+            <form id="approval" method="post">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table id="approval_table" class="table">
+                    </table>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Prescriptions</h3>
+            <form id="prescriptions" method="post">
+                {% csrf_token %}
+                {% for form in formset %}
+                    <div class="prescription-form" id="{{ form.prefix }}-row">
+                        {{ form|bootstrap_horizontal }}
+                    </div>
+                {% endfor %}
+                {{ formset.management_form }}
+                <button class="btn btn-lg btn-primary" id="save-patient">Update Patient</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Video History</h3>
+            <div class="table-responsive">
+                <table id="video_table" class="table table-condensed">
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <form id="removal" method="post">
+                {% csrf_token %}
+                <button class="btn btn-lg btn-primary" id="remove-patient">Remove Patient</button>
+            </form>
+        </div>
+    </div>
 {% endblock content %}
 
 {% block extra-js %}
