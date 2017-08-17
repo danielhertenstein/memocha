@@ -236,7 +236,7 @@ def patient_details(request, patient_id):
                 # present in the formset and we can assume they have been
                 # removed
                 for prescription in existing_prescriptions:
-                    patient.prescriptions.remove(pk=prescription)
+                    patient.prescriptions.remove(Prescription.objects.get(pk=prescription))
                 # Delete any prescriptions that are no longer related to anyone
                 Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
                 return redirect('/memocha/doctor')
