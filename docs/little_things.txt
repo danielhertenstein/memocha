@@ -1,3 +1,2 @@
-Make a requirements file
 Turn off debug
 Get AWS working
