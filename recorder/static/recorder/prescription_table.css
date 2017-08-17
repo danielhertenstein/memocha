@@ -1,0 +1,17 @@
+.delete-row {
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-bottom: 15px;
+    margin-top: -5px;
+}
+
+.add-row {
+    margin-left: 15px;
+    margin-right: 15px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+#save-patient {
+    float: right
+}

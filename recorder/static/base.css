@@ -33,3 +33,14 @@ body {
 .navbar-default .navbar-toggle .icon-bar {
     background-color: white;
 }
+
+.btn-primary {
+    background-image: none;
+    background-color: #1aaed7;
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background-color: #1cb8e3;
+}
