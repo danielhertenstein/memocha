@@ -4,7 +4,7 @@
 
 {% block extra-head %}
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'recorder/patient_dashboard.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'memocha/patient_dashboard.css' %}" />
 {% endblock extra-head %}
 
 {% block content %}
@@ -19,7 +19,7 @@
 
     <div class="row">
         <div class="col-md-12">
-            <form id="current_meds" method="post" action="{% url 'recorder:record_video' %}">
+            <form id="current_meds" method="post" action="{% url 'memocha:record_video' %}">
                 {% csrf_token %}
             </form>
         </div>

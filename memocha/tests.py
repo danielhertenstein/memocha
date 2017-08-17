@@ -10,7 +10,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User, Group
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth.hashers import make_password
-from recorder.models import Doctor, Prescription, Patient, Video
+from memocha.models import Doctor, Prescription, Patient, Video
 
 
 class VideoTestCase(TransactionTestCase):
@@ -213,29 +213,29 @@ class HomeButtonTestCase(TransactionTestCase):
 
     def test_not_logged_in(self):
         """Home button should take the vistor to the login screen."""
-        response = self.client.get('/recorder/dashboard', follow=True)
+        response = self.client.get('/memocha/dashboard', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, '/accounts/login/?next=/recorder/dashboard/', status_code=301)
+        self.assertRedirects(response, '/accounts/login/?next=/memocha/dashboard/', status_code=301)
         self.assertTemplateUsed('accounts/login.html')
         self.assertEqual(response.resolver_match.view_name, 'django.contrib.auth.views.LoginView')
 
     def test_patient_pressed(self):
         """The logged in patient should be taken to the patient dashboard."""
         self.client.login(username='Patient', password='patientpassword')
-        response = self.client.get('/recorder/dashboard', follow=True)
+        response = self.client.get('/memocha/dashboard', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, '/recorder/patient/', status_code=301)
-        self.assertTemplateUsed('recorder/patient_dashboard.html')
-        self.assertEqual(response.resolver_match.view_name, 'recorder:patient_dashboard')
+        self.assertRedirects(response, '/memocha/patient/', status_code=301)
+        self.assertTemplateUsed('memocha/patient_dashboard.html')
+        self.assertEqual(response.resolver_match.view_name, 'memocha:patient_dashboard')
 
     def test_doctor_pressed(self):
         """The logged in doctor should be taken to the doctor dashboard."""
         self.client.login(username='Doctor', password='doctorpassword')
-        response = self.client.get('/recorder/dashboard', follow=True)
+        response = self.client.get('/memocha/dashboard', follow=True)
         self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, '/recorder/doctor/', status_code=301)
-        self.assertTemplateUsed('recorder/doctor_dashboard.html')
-        self.assertEqual(response.resolver_match.view_name, 'recorder:doctor_dashboard')
+        self.assertRedirects(response, '/memocha/doctor/', status_code=301)
+        self.assertTemplateUsed('memocha/doctor_dashboard.html')
+        self.assertEqual(response.resolver_match.view_name, 'memocha:doctor_dashboard')
 
 
 class PatientCreationTestCase(TransactionTestCase):
@@ -302,7 +302,7 @@ class PatientCreationTestCase(TransactionTestCase):
             'password2': 'new_password'
         }
         response = self.client.post(
-            '/recorder/new_patient/',
+            '/memocha/new_patient/',
             data=form_data,
             follow=True
         )
@@ -334,7 +334,7 @@ class PatientCreationTestCase(TransactionTestCase):
             'password2': 'new_password'
         }
         response = self.client.post(
-            '/recorder/new_patient/',
+            '/memocha/new_patient/',
             data=form_data,
             follow=True
         )
@@ -361,7 +361,7 @@ class PatientCreationTestCase(TransactionTestCase):
             'password2': 'new_password'
         }
         response = self.client.post(
-            '/recorder/new_patient/',
+            '/memocha/new_patient/',
             data=form_data,
             follow=True
         )
@@ -389,7 +389,7 @@ class PatientCreationTestCase(TransactionTestCase):
             'password2': 'new_password'
         }
         response = self.client.post(
-            '/recorder/new_patient/',
+            '/memocha/new_patient/',
             data=form_data,
             follow=True
         )
@@ -417,7 +417,7 @@ class PatientCreationTestCase(TransactionTestCase):
             'password2': 'new_password'
         }
         response = self.client.post(
-            '/recorder/new_patient/',
+            '/memocha/new_patient/',
             data=form_data,
             follow=True
         )
@@ -445,7 +445,7 @@ class PatientCreationTestCase(TransactionTestCase):
             'password2': 'new_password'
         }
         response = self.client.post(
-            '/recorder/new_patient/',
+            '/memocha/new_patient/',
             data=form_data,
             follow=True
         )

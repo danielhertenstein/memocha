@@ -6,7 +6,7 @@
 
 {% block extra-head %}
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'recorder/prescription_table.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'memocha/prescription_table.css' %}" />
 {% endblock extra-head %}
 
 {% block content %}
@@ -41,7 +41,7 @@
 
 {% block extra-js %}
     {% load static %}
-    <script type="text/javascript" src="{% static 'recorder/jquery.formset.js' %}"></script>
+    <script type="text/javascript" src="{% static 'memocha/jquery.formset.js' %}"></script>
     <script type="text/javascript">
         $(function() {
             $('form div#prescriptions div.prescription-form').formset({

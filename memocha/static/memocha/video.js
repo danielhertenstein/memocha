@@ -104,12 +104,12 @@ $("form#video_upload").submit(function() {
     formData.append('data', my_file);
     $.ajax({
         type: 'POST',
-        url: '/recorder/patient/record',
+        url: '/memocha/patient/record',
         data: formData,
         processData: false,
         contentType: false,
         success: function() {
-            window.location.href = '/recorder/patient';
+            window.location.href = '/memocha/patient';
         }
     });
     return false;

@@ -11,20 +11,20 @@ from django.forms import formset_factory, modelformset_factory
 from django.core.serializers.json import DjangoJSONEncoder
 from django.utils import timezone
 
-from recorder.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm, UploadFileForm
-from recorder.models import Doctor, Patient, Prescription, Video
+from memocha.forms import MyUserCreationForm, PatientCreationForm, PrescriptionForm, PatientAccountForm, UploadFileForm
+from memocha.models import Doctor, Patient, Prescription, Video
 
 
 def index(request):
-    return render(request, 'recorder/index.html')
+    return render(request, 'memocha/index.html')
 
 
 @login_required
 def dashboard(request):
     if request.user.groups.filter(name='Patients').exists():
-        return redirect('/recorder/patient')
+        return redirect('/memocha/patient')
     else:
-        return redirect('/recorder/doctor')
+        return redirect('/memocha/doctor')
 
 
 @login_required
@@ -54,7 +54,7 @@ def patient_dashboard(request):
     prescriptions_json = json.dumps(prescriptions, cls=DjangoJSONEncoder)
     return render(
         request,
-        'recorder/patient_dashboard.html',
+        'memocha/patient_dashboard.html',
         {
             'patient': patient,
             'next_meds': next_meds,
@@ -74,7 +74,7 @@ def doctor_dashboard(request):
         return redirect('/accounts/login?next={0}'.format(request.path))
     doctor = Doctor.objects.get(user=request.user)
     patients = doctor.patient_set.all()
-    return render(request, 'recorder/doctor_dashboard.html', {'patients': patients})
+    return render(request, 'memocha/doctor_dashboard.html', {'patients': patients})
 
 
 def patient_creation(request):
@@ -122,10 +122,10 @@ def patient_creation(request):
                     user.save()
 
                     login(request, user)
-                    return redirect('/recorder/patient')
+                    return redirect('/memocha/patient')
     else:
         form = PatientAccountForm()
-    return render(request, 'recorder/patient_creation.html', {'form': form})
+    return render(request, 'memocha/patient_creation.html', {'form': form})
 
 
 def doctor_creation(request):
@@ -141,10 +141,10 @@ def doctor_creation(request):
                 password=form.cleaned_data.get('password1')
             )
             login(request, user)
-            return redirect('/recorder/doctor')
+            return redirect('/memocha/doctor')
     else:
         form = MyUserCreationForm()
-    return render(request, 'recorder/doctor_creation.html', {'form': form})
+    return render(request, 'memocha/doctor_creation.html', {'form': form})
 
 
 @login_required
@@ -176,11 +176,11 @@ def add_patient(request):
             for sub_form in formset:
                 prescription = sub_form.save()
                 patient.prescriptions.add(prescription)
-            return redirect('/recorder/doctor')
+            return redirect('/memocha/doctor')
     else:
         form = PatientCreationForm()
         formset = formset_factory(PrescriptionForm)(prefix='p_form')
-    return render(request, 'recorder/add_patient.html', {'form': form, 'formset': formset})
+    return render(request, 'memocha/add_patient.html', {'form': form, 'formset': formset})
 
 
 @login_required
@@ -189,7 +189,7 @@ def patient_details(request, patient_id):
     # If the doctor tries to access the patient page of not
     # their patient, redirect to the doctor's dashboard
     if not request.user.doctor.patient_set.filter(pk=patient.pk):
-        return redirect('/recorder/doctor')
+        return redirect('/memocha/doctor')
     approval_videos = patient.videos_to_be_approved()
     approval_needed = [video.corresponding_dosage() for video in approval_videos]
     approval_needed_json = json.dumps(approval_needed, cls=DjangoJSONEncoder)
@@ -201,7 +201,7 @@ def patient_details(request, patient_id):
             # But we also need to delete any prescriptions
             # that are no longer related to anyone
             Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
-            return redirect('/recorder/doctor')
+            return redirect('/memocha/doctor')
         elif 'approve' in request.POST:
             video = approval_videos[int(request.POST['approve'])]
             video.approved = True
@@ -239,7 +239,7 @@ def patient_details(request, patient_id):
                     patient.prescriptions.remove(pk=prescription)
                 # Delete any prescriptions that are no longer related to anyone
                 Prescription.objects.annotate(patients=Count('patient')).filter(patients=0).delete()
-                return redirect('/recorder/doctor')
+                return redirect('/memocha/doctor')
     if patient.prescriptions.all():
         formset = modelformset_factory(Prescription, fields='__all__', extra=0)(prefix='p_form', queryset=patient.prescriptions.all())
     else:
@@ -253,7 +253,7 @@ def patient_details(request, patient_id):
     video_list_json = json.dumps(video_list)
     prescriptions = list(patient.prescriptions.all().values_list())
     prescriptions_json = json.dumps(prescriptions, cls=DjangoJSONEncoder)
-    return render(request, 'recorder/patient_details.html',
+    return render(request, 'memocha/patient_details.html',
                   {
                       'patient': patient,
                       'formset': formset,
@@ -268,7 +268,7 @@ def patient_details(request, patient_id):
 def record_video(request):
 
     if request.method == 'GET':
-        return redirect('/recorder/patient')
+        return redirect('/memocha/patient')
     medication = request.POST['medication']
     form = UploadFileForm(request.POST, request.FILES, initial={'medication': medication})
     if form.is_valid() and request.FILES:
@@ -282,4 +282,4 @@ def record_video(request):
         video.save()
         # No need to redirect here since the AJAX request in video.js does it
         # for us. The AJAX request will redirect to the patient dashboard.
-    return render(request, 'recorder/record_video.html', {'form': form})
+    return render(request, 'memocha/record_video.html', {'form': form})

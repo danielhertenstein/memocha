@@ -6,8 +6,8 @@
 
 {% block extra-head %}
     {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'recorder/patient_details.css' %}" />
-    <link rel="stylesheet" type="text/css" href="{% static 'recorder/prescription_table.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'memocha/patient_details.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'memocha/prescription_table.css' %}" />
 {% endblock extra-head %}
 
 {% block content %}
@@ -70,7 +70,7 @@
 
 {% block extra-js %}
     {% load static %}
-    <script type="text/javascript" src="{% static 'recorder/jquery.formset.js' %}"></script>
+    <script type="text/javascript" src="{% static 'memocha/jquery.formset.js' %}"></script>
     <script type="text/javascript">
         $(function() {
             $('form#prescriptions div.prescription-form').formset({
@@ -118,12 +118,12 @@
                 formData.append(btn.attr('name'), btn.val());
                 $.ajax({
                     type: 'POST',
-                    url: "{% url 'recorder:patient_details' patient.id %}",
+                    url: "{% url 'memocha:patient_details' patient.id %}",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function() {
-                        window.location.href = "{% url 'recorder:patient_details' patient.id %}";
+                        window.location.href = "{% url 'memocha:patient_details' patient.id %}";
                     }
                 });
                 return false;
@@ -198,12 +198,12 @@
                 formData.append('action', 'remove');
                 $.ajax({
                     type: 'POST',
-                    url: "{% url 'recorder:patient_details' patient.id %}",
+                    url: "{% url 'memocha:patient_details' patient.id %}",
                     data: formData,
                     processData: false,
                     contentType: false,
                     success: function() {
-                        window.location.href = '/recorder/doctor';
+                        window.location.href = '/memocha/doctor';
                     }
                 });
                 return false;
