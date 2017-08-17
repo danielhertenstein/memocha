@@ -1,2 +1,0 @@
-Turn off debug
-Get AWS working
