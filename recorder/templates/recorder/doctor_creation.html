@@ -1,6 +1,4 @@
-{% extends 'base.html' %}
-
-{% load bootstrap %}
+{% extends 'recorder/account_creation.html' %}
 
 {% block title %}memocha Doctor Account Creation{%  endblock title %}
 
@@ -8,16 +6,3 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'recorder/doctor_creation.css' %}" />
 {% endblock extra-head %}
-
-{% block content %}
-    <h2>Account Creation</h2>
-    <form class="form-horizontal" method="post">
-        {% csrf_token %}
-        {{ form|bootstrap_horizontal }}
-        <div class="form-group">
-            <div class="col-sm-10 col-sm-offset-2">
-                <button id="submit-button" class="btn btn-lg btn-primary">Create Account</button>
-            </div>
-        </div>
-    </form>
-{% endblock content %}
