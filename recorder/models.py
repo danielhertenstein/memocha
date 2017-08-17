@@ -20,7 +20,7 @@ class Doctor(models.Model):
 
 class Prescription(models.Model):
     medication = models.CharField(max_length=100)
-    dosage = models.IntegerField()
+    dosage = models.CharField(max_length=100)
     dosage_times = ArrayField(models.TimeField())
 
     def __str__(self):
