@@ -1,4 +1,3 @@
 Make a requirements file
-Clean up javascript
 Turn off debug
 Get AWS working
