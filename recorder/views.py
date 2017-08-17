@@ -89,21 +89,21 @@ def patient_creation(request):
 
             implied_user = User.objects.filter(username=username)
             if not implied_user:
-                same_name_users = User.objects.filter(
+                existing_user = User.objects.filter(
                     first_name=first_name,
                     last_name=last_name,
+                    patient__date_of_birth=date_of_birth
                 )
-                for user in same_name_users:
-                    if user.patient.date_of_birth == date_of_birth:
-                        message = ('An account with this name and date of '
-                                   'birth has already been activated. Return '
-                                   'to the home screen and log in.')
-                        form.add_error('__all__', message)
-                    break
+                if existing_user:
+                    message = ('An account with this name and date of '
+                               'birth has already been activated. Return '
+                               'to the home screen and log in.')
+                    form.add_error('__all__', message)
                 else:
                     message = ('No matching patient record has been registered '
-                               'by a doctor. Please contact your doctor to '
-                               'ensure your record has been created.')
+                               'by a doctor. Please check the name and date of '
+                               'birth entered or contact your doctor to ensure '
+                               'your record has been created.')
                     form.add_error('__all__', message)
 
             if not form.errors:
@@ -112,9 +112,8 @@ def patient_creation(request):
                     password=secure_code
                 )
                 if user is None:
-                    message = ('The name, date of birth, and secure code '
-                               'entered do not match those provided by your '
-                               'doctor. Please try again.')
+                    message = ('The secure code entered do not match that '
+                               'provided by your doctor. Please try again.')
                     form.add_error('__all__', message)
                 else:
                     # Update user account
