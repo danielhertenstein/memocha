@@ -49,7 +49,7 @@ class Patient(models.Model):
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
                 time_dif = datetime.combine(now.date(), dosage_time) - now
-                if time_dif.seconds <= DOSAGE_TIME_WIGGLE_ROOM:
+                if time_dif.total_seconds() <= DOSAGE_TIME_WIGGLE_ROOM:
                     # Check to see if the video has already been recorded
                     dosage_datetime = datetime.combine(now.date(), dosage_time)
                     start_time = dosage_datetime - timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
