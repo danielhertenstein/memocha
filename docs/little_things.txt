@@ -1,6 +1,6 @@
 Fix the dosage field to be text
 Refactor common html and css
 Make a requirements file
-Write some example tests
 Clean up javascript
 Turn off debug
+Get AWS working
