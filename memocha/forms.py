@@ -28,7 +28,7 @@ class PatientCreationForm(forms.Form):
     first_name = forms.CharField(max_length=30)
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=256)
-    current_year = timezone.now().year
+    current_year = timezone.localtime().year
     date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=range(current_year, current_year-125, -1)))
     secure_code = forms.CharField(max_length=50)
 
@@ -44,7 +44,7 @@ class PatientAccountForm(UserCreationForm):
     last_name = forms.CharField(max_length=30)
     email = forms.EmailField(max_length=256)
     secure_code = forms.CharField(max_length=50)
-    current_year = timezone.now().year
+    current_year = timezone.localtime().year
     date_of_birth = forms.DateField(widget=forms.SelectDateWidget(years=range(current_year, current_year-125, -1)))
 
     field_order = [

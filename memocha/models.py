@@ -45,12 +45,13 @@ class Patient(models.Model):
     def recordable_medications(self):
         medications = []
         times = []
-        now = timezone.now()
+        now = timezone.localtime()
         already_recorded = self.videos_for_date(now.date())
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
-                time_dif = datetime.combine(now.date(), dosage_time) - now
-                if time_dif.total_seconds() <= DOSAGE_TIME_WIGGLE_ROOM:
+                dosage_datetime = timezone.make_aware(datetime.combine(now.date(), dosage_time))
+                time_dif = dosage_datetime - now
+                if abs(time_dif.total_seconds()) <= DOSAGE_TIME_WIGGLE_ROOM:
                     # Check to see if the video has already been recorded
                     dosage_datetime = datetime.combine(now.date(), dosage_time)
                     start_time = dosage_datetime - timedelta(seconds=DOSAGE_TIME_WIGGLE_ROOM)
@@ -68,33 +69,35 @@ class Patient(models.Model):
     def next_medication(self):
         time_to_next_medication = timedelta(microseconds=-1)
         medications = []
-        now = timezone.now()
+        now = timezone.localtime()
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
-                time_dif = datetime.combine(now.date(), dosage_time) - now
+                time_dif = timezone.make_aware(datetime.combine(now.date(), dosage_time)) - now
+                time_dif_seconds = time_dif.total_seconds()
 
-                if time_to_next_medication.total_seconds() < 0:
+                next_medication_seconds = time_to_next_medication.total_seconds()
+                if next_medication_seconds < 0:
                     # Haven't found a medication to take today yet
-                    if time_dif.total_seconds() >= 0:
+                    if time_dif_seconds >= 0:
                         # Found a medication to take today
                         time_to_next_medication = time_dif
                         medications = [prescription.medication, ]
                         break
                     else:
                         # Larger negative time_dif's means earlier in the day
-                        if time_dif.total_seconds() <= time_to_next_medication.total_seconds():
-                            if time_dif.total_seconds() == time_to_next_medication.total_seconds():
+                        if time_dif_seconds <= next_medication_seconds:
+                            if time_dif_seconds == next_medication_seconds:
                                 medications.append(prescription.medication)
                             else:
                                 time_to_next_medication = time_dif
                                 medications = [prescription.medication, ]
                 else:
                     # There is at least one medication yet to be taken today
-                    if time_dif.total_seconds() < 0:
+                    if time_dif_seconds < 0:
                         # Skip tomorrow's medications if we have one for today
                         continue
-                    if time_dif.total_seconds() <= time_to_next_medication.total_seconds():
-                        if time_dif.total_seconds() == time_to_next_medication.total_seconds():
+                    if time_dif_seconds <= next_medication_seconds:
+                        if time_dif_seconds == next_medication_seconds:
                             medications.append(prescription.medication)
                         else:
                             time_to_next_medication = time_dif

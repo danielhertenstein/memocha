@@ -15,7 +15,7 @@ from memocha.models import Doctor, Prescription, Patient, Video
 
 class VideoTestCase(TransactionTestCase):
     def setUp(self):
-        current_datetime = timezone.now()
+        current_datetime = timezone.localtime()
 
         # Make the doctor and patient groups
         doctor_group = Group.objects.create(name='Doctors')
@@ -70,7 +70,7 @@ class VideoTestCase(TransactionTestCase):
         Tests that the right timeslot is returned for a test video.
         """
         prescription = Prescription.objects.get(medication='test')
-        current_datetime = timezone.now()
+        current_datetime = timezone.localtime()
 
         video = Video.objects.get(pk=1)
 
@@ -87,7 +87,7 @@ class VideoTestCase(TransactionTestCase):
 
 class PatientTestCase(TransactionTestCase):
     def setUp(self):
-        current_datetime = timezone.now()
+        current_datetime = timezone.localtime()
 
         # Make the doctor and patient groups
         doctor_group = Group.objects.create(name='Doctors')
@@ -151,7 +151,7 @@ class PatientTestCase(TransactionTestCase):
         expected_name = [expected_prescription.medication, ]
         expected_time = expected_prescription.dosage_times[0]
 
-        current_time = timezone.now()
+        current_time = timezone.localtime()
         current_time = current_time.replace(hour=23, minute=0, second=0, microsecond=0)
         with freeze_time(current_time):
             medications, times = patient.next_medication()
@@ -169,7 +169,7 @@ class PatientTestCase(TransactionTestCase):
         expected_name = [expected_prescription.medication, ]
         expected_time = expected_prescription.dosage_times[1]
 
-        current_time = timezone.now()
+        current_time = timezone.localtime()
         current_time = current_time.replace(hour=11, minute=30, second=0, microsecond=0)
         with freeze_time(current_time):
             medications, times = patient.next_medication()
@@ -208,7 +208,7 @@ class HomeButtonTestCase(TransactionTestCase):
         patient = Patient.objects.create(
             user=patient_user,
             doctor=doctor,
-            date_of_birth=timezone.now().date(),
+            date_of_birth=timezone.localtime().date(),
         )
 
     def test_not_logged_in(self):

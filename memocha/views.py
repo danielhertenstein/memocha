@@ -245,7 +245,7 @@ def patient_details(request, patient_id):
     else:
         formset = modelformset_factory(Prescription, fields='__all__')(prefix='p_form')
     dates_of_interest = [(patient.user.date_joined + timedelta(days=i)).date()
-                         for i in range(int((timezone.now() - patient.user.date_joined).days)+1)]
+                         for i in range(int((timezone.localtime() - patient.user.date_joined).days)+1)]
     video_list = []
     videos = patient.video_set.all()
     for video in videos:
@@ -275,7 +275,7 @@ def record_video(request):
         patient = Patient.objects.get(user=request.user)
         video = Video(
             person=patient,
-            record_date=timezone.now(),
+            record_date=timezone.localtime(),
             prescription=patient.prescriptions.get(medication=medication),
             upload=request.FILES['data']
         )
