@@ -21,11 +21,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'ts!awrk+sc5mgmqxvtfz-4_t+5u!g2#3*7flg&f$apyvjb#=d!'
+#SECRET_KEY = os.environ['SECRET_KEY']
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '.danielhertenstein.com'
+]
 
 
 # Application definition
@@ -81,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'memocha',
         'USER': 'dr_emocha',
-        'PASSWORD': 'memocha',
+        'PASSWORD': 'fake_password',
         'HOST': 'localhost',
         'PORT': '',
     }
@@ -124,7 +126,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
+STATIC_ROOT = '/var/www/daniel.hertenstein.com/static'
 STATIC_URL = '/static/'
+STATIC_ROOT = '/var/www/daniel.hertenstein.com/media'
 MEDIA_URL = '/media/'
 
 LOGOUT_REDIRECT_URL = '/memocha/'
