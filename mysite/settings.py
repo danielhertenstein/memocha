@@ -23,11 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ts!awrk+sc5mgmqxvtfz-4_t+5u!g2#3*7flg&f$apyvjb#=d!'
 #SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = [
-    '.danielhertenstein.com'
-]
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
