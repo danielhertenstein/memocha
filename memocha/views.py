@@ -275,7 +275,7 @@ def record_video(request):
         patient = Patient.objects.get(user=request.user)
         video = Video(
             person=patient,
-            record_date=datetime.now(),
+            record_date=timezone.now(),
             prescription=patient.prescriptions.get(medication=medication),
             upload=request.FILES['data']
         )

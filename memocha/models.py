@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
@@ -44,7 +45,7 @@ class Patient(models.Model):
     def recordable_medications(self):
         medications = []
         times = []
-        now = datetime.now()
+        now = timezone.now()
         already_recorded = self.videos_for_date(now.date())
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
@@ -67,7 +68,7 @@ class Patient(models.Model):
     def next_medication(self):
         time_to_next_medication = timedelta(microseconds=-1)
         medications = []
-        now = datetime.now()
+        now = timezone.now()
         for prescription in self.prescriptions.all():
             for dosage_time in prescription.dosage_times:
                 time_dif = datetime.combine(now.date(), dosage_time) - now
