@@ -1,0 +1,5 @@
+HTTPS
+Make sure "manage.py check --deploy" looks good
+Check favicon is working
+Use S3 for storing Media
+Route site to danielhertenstein.com
