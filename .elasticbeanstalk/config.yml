@@ -1,6 +1,10 @@
 branch-defaults:
   master:
     environment: memocha-dev
+environment-defaults:
+  memocha-dev:
+    branch: null
+    repository: null
 global:
   application_name: memocha
   branch: null
