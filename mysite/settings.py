@@ -23,6 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'ts!awrk+sc5mgmqxvtfz-4_t+5u!g2#3*7flg&f$apyvjb#=d!'
 #SECRET_KEY = os.environ['SECRET_KEY']
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARD_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
