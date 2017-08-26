@@ -128,8 +128,9 @@ class Video(models.Model):
     approved = models.NullBooleanField()
 
     def corresponding_dosage(self):
-        record_hour = self.record_date.hour
-        record_second = self.record_date.second
+        localtime = timezone.localtime(self.record_date)
+        record_hour = localtime.hour
+        record_second = localtime.second
         possible_times = self.prescription.dosage_times
         timeslot = min(
             possible_times,
@@ -140,7 +141,7 @@ class Video(models.Model):
         )
         return {
             'medication': self.prescription.medication,
-            'date': self.record_date.date().strftime('%d %b'),
+            'date': localtime.date().strftime('%d %b'),
             'timeslot': timeslot.strftime('%H:%M'),
             'url': self.upload.url,
             'approved': self.approved,
