@@ -130,12 +130,14 @@ class Video(models.Model):
     def corresponding_dosage(self):
         localtime = timezone.localtime(self.record_date)
         record_hour = localtime.hour
+        record_minute = localtime.minute
         record_second = localtime.second
         possible_times = self.prescription.dosage_times
         timeslot = min(
             possible_times,
             key= lambda time: abs(
                 (record_hour - time.hour) * 3600
+                + (record_minute - time.minute) * 60
                 + (record_second - time.second)
             )
         )
