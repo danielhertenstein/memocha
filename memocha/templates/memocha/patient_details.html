@@ -171,11 +171,13 @@
 
             videos = {{ video_list|safe }};
             table = $("#video_table");
+            table_body = $(table).find("> tBody");
+            table_head = $(table).find("> tHead");
             for (i=0; i < videos.length; i++) {
                 var video = videos[i];
-                row = table.find("th:contains("+ video.date +")").parent()[0];
+                row = table_body.find("th:contains("+ video.date +")").parent()[0];
                 console.log(row);
-                column = table.find("th:contains("+ video.medication +")").index();
+                column = table_head.find("th:contains("+ video.medication +")").index();
                 console.log(column);
                 cell = row.cells[column];
                 node = $(cell).find("p:contains("+ video.timeslot +")");
